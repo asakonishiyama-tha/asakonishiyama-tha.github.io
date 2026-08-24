@@ -13,6 +13,7 @@
     "validate:assets": "node scripts/validate-assets.mjs",
     "prebuild": "node scripts/prepare-public-assets.mjs",
     "build": "npm run validate:content && npm run validate:assets && next build",
+    "postbuild": "node scripts/prune-static-error-documents.mjs out",
     "preview:static": "node scripts/serve-static-export.mjs --directory out --hostname 127.0.0.1 --port 3000",
     "release:prepare": "node scripts/build-public-source.mjs",
     "release:scan": "node scripts/scan-release-safety.mjs",

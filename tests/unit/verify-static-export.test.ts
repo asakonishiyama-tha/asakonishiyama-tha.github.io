@@ -22,7 +22,6 @@ const approvedPdfs = [
   "/downloads/tha-ai-management-action-sheet.pdf",
 ];
 
-const frameworkErrorDocuments = ["404.html", "404/index.html"];
 const frameworkRouteArtifacts = [
   "index.txt",
   "talks/ai-president-intro/index.txt",
@@ -51,9 +50,6 @@ async function createValidExport() {
     await writeArtifact(relativePath, shell);
     await writeArtifact(relativePath.replace(/\.html$/, ".txt"), "framework route payload");
   }
-  const notFoundDocument = "<!doctype html><title>Framework not found</title>";
-  await writeArtifact("404.html", notFoundDocument);
-  await writeArtifact("404/index.html", notFoundDocument);
   await writeArtifact("_next/static/build-test/_buildManifest.js", "self.__BUILD_MANIFEST = {};");
   await writeArtifact("_next/static/build-test/_ssgManifest.js", "self.__SSG_MANIFEST = new Set();");
   await writeArtifact("_next/static/css/site.css", "body { color: #1f2a44; }");
@@ -138,22 +134,16 @@ describe("verifyStaticExport", () => {
     expect(report.routes).toEqual(approvedRoutes);
     expect(report.forbiddenArtifacts).toEqual([]);
     expect(report.pdfs).toEqual(approvedPdfs);
-    expect(report.frameworkErrorDocuments).toEqual(frameworkErrorDocuments);
+    expect(report.frameworkErrorDocuments).toEqual([]);
     expect(report.frameworkRouteArtifacts).toEqual(frameworkRouteArtifacts);
   });
 
-  it.each([
-    { label: "404.html", removed: ["404.html"] },
-    { label: "404/index.html", removed: ["404/index.html"] },
-    { label: "both 404 documents", removed: frameworkErrorDocuments },
-  ])("requires $label in the observed framework error set", async ({ removed }) => {
+  it.each(["404.html", "404/index.html"])("rejects the browser-addressable framework error artifact %s", async (relativePath) => {
     await createValidExport();
-    await Promise.all(removed.map((relativePath) => (
-      rm(path.join(temporaryRoot, relativePath), { force: true })
-    )));
+    await writeArtifact(relativePath, "<!doctype html><title>Framework not found</title>");
 
     await expect(verifyStaticExport(temporaryRoot)).rejects.toThrow(
-      "required-framework-error-set: missing",
+      `unsupported-artifact: ${relativePath}`,
     );
   });
 
@@ -293,25 +283,19 @@ describe("static export server", () => {
     expect(pdf.body).toEqual(Buffer.from("%PDF-1.7\naction-sheet"));
   });
 
-  it.each([
-    "/404",
-    "/404/",
-    "/404.html",
-    "/404/index.html",
-    "/404?source=test",
-    "/404/?source=test",
-    "/404.html?source=test",
-    "/404/index.html?source=test",
-  ])("serves the generated framework error document with status 404 for %s", async (requestPath) => {
-    await createValidExport();
-    const origin = await startStaticServer();
+  it.each(["/404", "/404/", "/404.html", "/404/index.html"])(
+    "returns status 404 when no framework error document is published for %s",
+    async (requestPath) => {
+      await createValidExport();
+      const origin = await startStaticServer();
 
-    const response = await request(origin, requestPath);
+      const response = await request(origin, requestPath);
 
-    expect(response.status).toBe(404);
-    expect(response.headers["content-type"]).toContain("text/html");
-    expect(response.body.toString()).toContain("Framework not found");
-  });
+      expect(response.status).toBe(404);
+      expect(response.headers["content-type"]).toContain("text/plain");
+      expect(response.body.toString()).toBe("Not Found\n");
+    },
+  );
 
   it.each(["/%2e%2e%2foutside.txt", "/%2e%2e%5coutside.txt", "/bad%00path"])(
     "rejects the decoded unsafe request path %s",

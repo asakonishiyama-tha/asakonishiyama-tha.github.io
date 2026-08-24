@@ -34,8 +34,8 @@ const approvedPdfArtifacts = new Set(approvedPdfs.map((pdf) => pdf.slice(1)));
 const approvedMediaArtifacts = new Set([]);
 const exactInfrastructureArtifacts = new Set([".gitkeep"]);
 
-const requiredFrameworkErrorDocuments = ["404.html", "404/index.html"];
-const frameworkErrorDocuments = new Set(requiredFrameworkErrorDocuments);
+const requiredFrameworkErrorDocuments = [];
+const frameworkErrorDocuments = new Set(["404.html", "404/index.html"]);
 const forbiddenSegments = new Set(["api", "admin", "live", "presenter"]);
 const secretRules = [
   ["private-key", /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
@@ -199,7 +199,6 @@ function isApprovedNextStaticArtifact(relativePath) {
 
 function isApprovedArtifact(relativePath) {
   return approvedHtmlArtifacts.has(relativePath)
-    || frameworkErrorDocuments.has(relativePath)
     || approvedFrameworkRouteArtifacts.has(relativePath)
     || approvedPdfArtifacts.has(relativePath)
     || approvedMediaArtifacts.has(relativePath)
