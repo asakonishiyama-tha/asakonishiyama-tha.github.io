@@ -44,4 +44,18 @@ describe("static deployment dependency boundary", () => {
     expect(installedDependencies).not.toHaveProperty("@tinacms/cli");
     expect(installedDependencies).not.toHaveProperty("googleapis");
   });
+
+  it("keeps the lockfile complete for the Linux CI optional dependency graph", () => {
+    const packageJson = JSON.parse(readFileSync(path.join(projectRoot, "package.json"), "utf8")) as {
+      devDependencies?: Record<string, string>;
+    };
+    const packageLock = JSON.parse(readFileSync(path.join(projectRoot, "package-lock.json"), "utf8")) as {
+      packages: Record<string, { version?: string }>;
+    };
+
+    expect(packageJson.devDependencies?.["@emnapi/core"]).toBe("1.11.3");
+    expect(packageJson.devDependencies?.["@emnapi/runtime"]).toBe("1.11.3");
+    expect(packageLock.packages["node_modules/@emnapi/core"]?.version).toBeTruthy();
+    expect(packageLock.packages["node_modules/@emnapi/runtime"]?.version).toBeTruthy();
+  });
 });
