@@ -103,6 +103,9 @@
 .cardsScene { background: #fff; display: grid; gap: 70px; grid-template-columns: minmax(260px, .8fr) minmax(360px, 1.2fr); align-items: start; }
 .cardsHeading { position: sticky; top: 12vh; }
 .cardsHeading h2, .caseStudy h2, .quest h2, .lead h2 { font-size: clamp(2.2rem, 5vw, 5.2rem); letter-spacing: -.06em; line-height: 1.1; }
+[data-talk-slug="long-lived-companies"] .hero h1 { font-size: clamp(3.25rem, 6.3vw, 6.4rem); max-width: 14ch; text-wrap: balance; }
+[data-talk-slug="long-lived-companies"] .statement blockquote { font-size: clamp(2.1rem, 4.4vw, 4.25rem); max-width: 17ch; text-wrap: balance; }
+[data-talk-slug="long-lived-companies"] :is(.cardsHeading h2, .caseStudy h2, .quest h2, .lead h2) { font-size: clamp(2.2rem, 3.25vw, 4rem); text-wrap: balance; }
 .cards { border-left: 1px solid var(--mist); list-style: none; margin: 0; padding: 0 0 0 clamp(24px, 4vw, 64px); }
 .cards li { display: grid; gap: 24px; grid-template-columns: 58px 1fr; padding: 0 0 48px; position: relative; }
 .cards li::before { background: var(--blue); border: 4px solid #fff; border-radius: 50%; content: ""; height: 15px; left: calc(-1 * clamp(24px, 4vw, 64px) - 8px); position: absolute; top: 5px; width: 15px; }
@@ -140,4 +143,7 @@
 }
 @media (max-width: 720px) {
   .orbit { left: 13px; width: 3px; }.scene { min-height: auto; padding: 96px 30px 96px 48px; }.hero { min-height: 100svh; }.hero h1 { font-size: clamp(3rem, 14vw, 4.9rem); }.scrollPrompt { right: 30px; }.statement { padding-left: 48px; }.statement blockquote { font-size: clamp(2.15rem, 10.5vw, 3.55rem); }.cardsScene, .caseStudy, .quest, .lead { display: block; }.cardsHeading { position: static; }.cards { margin-top: 46px; }.caseImage { margin-top: 40px; }.qr { margin-top: 38px; width: max-content; }.leadActions { margin-top: 38px; }.videoControl { bottom: 20px; right: 20px; }
+  [data-talk-slug="long-lived-companies"] .hero h1 { font-size: clamp(2.7rem, 12vw, 4rem); }
+  [data-talk-slug="long-lived-companies"] .statement blockquote { font-size: clamp(2rem, 9vw, 3rem); }
+  [data-talk-slug="long-lived-companies"] :is(.cardsHeading h2, .caseStudy h2, .quest h2, .lead h2) { font-size: clamp(2rem, 10vw, 3rem); }
 }

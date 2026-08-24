@@ -11,7 +11,7 @@
       "id": "hero",
       "type": "hero",
       "heading": "御社らしさは、20年後も残るか。",
-      "supportingText": "日本の老舗企業が教える、AI時代の「時間資産」の残し方",
+      "supportingText": "日本の老舗企業に学ぶ、AI時代の「時間資産」",
       "image": "/media/long-lived-companies-hero.webp",
       "alt": "時間を重ねた企業の知恵を、年輪と青い光で表現したコンセプト画像",
       "atmosphere": "timeMesh",
@@ -31,15 +31,15 @@
       "cards": [
         {
           "title": "約1,450年",
-          "description": "日本最古の会社とされる金剛組。飛鳥時代の創業とされ、現在も宮大工の仕事を続ける。"
+          "description": "飛鳥時代創業とされる金剛組。今も宮大工の仕事を続ける。"
         },
         {
           "title": "45,284社",
-          "description": "創業100年を超える日本企業。帝国データバンク「全国『老舗企業』分析調査（2024年）」。"
+          "description": "創業100年超の日本企業（帝国データバンク、2024年）。"
         },
         {
           "title": "41.3%",
-          "description": "世界の100年企業に占める日本企業の割合。日経BPコンサルティング「周年事業ラボ」（2020年発表）。"
+          "description": "世界の100年企業に占める割合（日経BP、2020年）。"
         }
       ],
       "evidenceRefs": [
@@ -51,7 +51,7 @@
     {
       "id": "not-accidental",
       "type": "statement",
-      "statement": "日本が会社の寿命で「断トツ世界一」なのは、偶然ではない。",
+      "statement": "日本が会社の寿命で世界一なのは、偶然ではない。",
       "evidenceRefs": ["fact-world-share-413", "synthesis-five-soils"]
     },
     {
@@ -80,17 +80,17 @@
     {
       "id": "change-to-protect",
       "type": "statement",
-      "statement": "老舗は、変わらなかった会社ではない。守るために、変え続けた会社だ。",
+      "statement": "老舗は、守るために変え続けた会社だ。",
       "evidenceRefs": ["case-toushirou", "case-ohga", "case-kikkoman"]
     },
     {
       "id": "case-toushirou",
       "type": "caseStudy",
       "organization": "豆子郎",
-      "heading": "初心を守るため、成長中に全国販路を撤退した。",
-      "challenge": "高度成長期、売上が伸びるほど味と初心が薄まる危機があった。",
-      "approach": "「人々を喜ばせたい」という創業の初心を守り、成長中に全国販路から撤退した。",
-      "outcome": "注文一つひとつの物語を聞く姿勢が残り、理念を教えたAI「まめこ社長」へ受け継がれた。",
+      "heading": "初心を守り、全国から退いた。",
+      "challenge": "成長するほど、味と初心が薄まる危機があった。",
+      "approach": "創業の初心を守り、全国販路から撤退した。",
+      "outcome": "注文の物語を聞く姿勢が、AI「まめこ社長」に受け継がれた。",
       "sourceNote": "取材に基づく事例 / THAによる取材・書籍原稿（実名掲載・エピソードは同社了解済み）。",
       "evidenceRefs": ["case-toushirou"]
     },
@@ -98,10 +98,10 @@
       "id": "case-ohga",
       "type": "caseStudy",
       "organization": "大賀薬局",
-      "heading": "奉仕の心を守るため、規模ではなく地域の信頼を選んだ。",
-      "challenge": "全国チェーンとの規模競争で売上が落ち、薬剤師の離職も続いた。",
-      "approach": "「奉仕の心」を守るものと定め、地域と社員への奉仕を軸に組織を立て直した。",
-      "outcome": "守るものが決まったことで、社長自ら地域のヒーローに挑むほど大胆に変われる会社になった。",
+      "heading": "奉仕を守り、地域を選んだ。",
+      "challenge": "規模競争で売上が落ち、薬剤師の離職も続いた。",
+      "approach": "地域と社員への奉仕を、組織の判断軸に据えた。",
+      "outcome": "守る軸が定まり、大胆に変われる会社になった。",
       "sourceNote": "取材に基づく事例 / THAによる取材・書籍原稿（実名掲載・エピソードは同社了解済み）。",
       "evidenceRefs": ["case-ohga"]
     },
@@ -109,10 +109,10 @@
       "id": "case-kikkoman",
       "type": "caseStudy",
       "organization": "キッコーマン",
-      "heading": "理念とビジョンを守り、しょうゆを世界の日常へ翻訳した。",
-      "challenge": "戦後の海外進出は、短期の最適解では説明できない決断だった。",
-      "approach": "「しょうゆをグローバル・スタンダードの調味料にする」というビジョンを掲げ、各地の日常食へ長く翻訳した。",
-      "outcome": "理念と諦めない姿勢が判断軸となり、360年以上続く企業が世界市場を拓いた。",
+      "heading": "理念を守り、しょうゆを世界へ。",
+      "challenge": "海外進出は、短期の最適解では説明できなかった。",
+      "approach": "しょうゆを各地の日常食へ、長い時間をかけて翻訳した。",
+      "outcome": "理念と諦めない姿勢が、世界市場を拓く判断軸になった。",
       "sourceNote": "公式情報に基づく事例 / キッコーマン公式沿革・決算資料。講演内容は社内聴講メモ。",
       "evidenceRefs": ["case-kikkoman"]
     },
@@ -126,7 +126,7 @@
     {
       "id": "two-risks",
       "type": "cards",
-      "heading": "承継の時間切れ / 世界の平均への置き換え",
+      "heading": "失う理由は、時間切れと平均化。",
       "cards": [
         { "title": "承継の時間切れ", "description": "人の中だけにある知恵は、引退とともに失われる。" },
         { "title": "世界の平均への置き換え", "description": "同じAIの平均的な答えが、御社固有の判断を覆っていく。" }
@@ -144,7 +144,7 @@
     {
       "id": "quest",
       "type": "questCta",
-      "heading": "3問、60秒。御社の「時間資産」の現在地がわかる。",
+      "heading": "3問、60秒。「時間資産」はどの段階か。",
       "description": "会社名や氏名を入力せずに、既にある強みと最初の一歩を確認できます。",
       "buttonLabel": "60秒診断を始める",
       "evidenceRefs": []
@@ -152,13 +152,13 @@
     {
       "id": "twenty-years-later",
       "type": "statement",
-      "statement": "20年後、子どもに誇れる仕事を残す。その一歩目が、明日の判断です。",
+      "statement": "20年後に誇れる仕事は、明日の判断から生まれる。",
       "evidenceRefs": []
     },
     {
       "id": "lead",
       "type": "leadCta",
-      "heading": "今日の気づきを、次の世代へ渡せる形にする。",
+      "heading": "今日の気づきを、次の世代へ渡す。",
       "description": "診断結果に合った御社らしさ継承シートと登壇資料を持ち帰れます。",
       "downloadLabel": "御社らしさ継承シートを受け取る",
       "consultationLabel": "会社らしさの継承を相談する",

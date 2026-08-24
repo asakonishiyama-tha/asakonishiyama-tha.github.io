@@ -33,7 +33,11 @@ export function StoryRenderer({ talk }: StoryRendererProps) {
   }, [talk.slug]);
 
   return (
-    <main className={styles.story} data-reduced-motion={reducedMotion ? "true" : "false"}>
+    <main
+      className={styles.story}
+      data-reduced-motion={reducedMotion ? "true" : "false"}
+      data-talk-slug={talk.slug}
+    >
       <div className={styles.orbit} aria-hidden="true">
         <motion.div
           className={styles.orbitProgress}

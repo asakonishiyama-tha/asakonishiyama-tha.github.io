@@ -2,21 +2,95 @@
   --blue: #2360f0;
   --navy: #1f2a44;
   --yellow: #ffe93c;
-  background: var(--navy);
-  color: #fff;
+  background: #fff;
+  color: var(--navy);
   min-height: 100svh;
   overflow: hidden;
+  position: relative;
+}
+
+.ambition {
+  align-content: center;
+  background:
+    radial-gradient(circle at 50% 112%, rgb(255 233 60 / 24%), transparent 28%),
+    linear-gradient(90deg, rgb(35 96 240 / 5%) 1px, transparent 1px),
+    linear-gradient(rgb(35 96 240 / 5%) 1px, transparent 1px),
+    #fff;
+  background-size: auto, 64px 64px, 64px 64px, auto;
+  display: grid;
+  min-height: min(100svh, 900px);
+  padding: clamp(72px, 10vw, 132px) max(9vw, 88px);
+  position: relative;
+}
+
+.ambition::after {
+  background: linear-gradient(var(--blue), var(--yellow));
+  bottom: 0;
+  content: "";
+  height: clamp(56px, 9vw, 108px);
+  left: 50%;
+  position: absolute;
+  width: 2px;
+}
+
+.ambitionEyebrow {
+  color: var(--blue);
+  font-size: clamp(.9rem, 1.4vw, 1.08rem);
+  font-weight: 900;
+  letter-spacing: .12em;
+  margin: 0 0 clamp(24px, 4vw, 44px);
+  text-align: center;
+}
+
+.ambition h1 {
+  font-size: clamp(3.2rem, 7.4vw, 7.2rem);
+  letter-spacing: -.07em;
+  line-height: 1.02;
+  margin: 0 auto;
+  max-width: 13ch;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.ambition h1 span {
+  color: var(--blue);
+  text-decoration-color: var(--yellow);
+  text-decoration-line: underline;
+  text-decoration-thickness: .16em;
+  text-underline-offset: -.05em;
+}
+
+.ambitionCopy {
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  line-height: 1.9;
+  margin: clamp(30px, 5vw, 52px) auto 0;
+  max-width: 46rem;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.ambitionSpeaker {
+  color: #5b6680;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  margin: 24px 0 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.libraryPanel {
+  background: var(--navy);
+  color: #fff;
   padding: clamp(28px, 6vw, 80px);
   position: relative;
 }
 
-.library::before {
+.libraryPanel::before {
   background: var(--blue);
   content: "";
-  height: 100%;
-  left: 0;
+  inset: 0 auto 0 0;
   position: absolute;
-  top: 0;
   width: clamp(10px, 2vw, 28px);
 }
 
@@ -47,7 +121,7 @@
   margin: 0 0 22px;
 }
 
-.hero h1 {
+.hero h2 {
   font-size: clamp(3.4rem, 12vw, 8.6rem);
   letter-spacing: -.08em;
   line-height: .92;
@@ -90,7 +164,7 @@
   margin: 0 0 14px;
 }
 
-.talk h2 {
+.talk h3 {
   font-size: clamp(2rem, 5vw, 4.8rem);
   letter-spacing: -.055em;
   line-height: 1.08;
@@ -151,6 +225,15 @@
 }
 
 @media (max-width: 760px) {
+  .ambition {
+    min-height: 88svh;
+    padding: 84px 30px 108px;
+  }
+
+  .ambition h1 {
+    font-size: clamp(3rem, 15vw, 4.7rem);
+  }
+
   .talk {
     grid-template-columns: 48px 1fr;
   }

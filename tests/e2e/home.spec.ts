@@ -35,7 +35,13 @@ test("serves the approved home route and links both published Talks", async ({ p
 
   expect(response?.status()).toBe(200);
   expect(response?.headers()["content-type"]).toContain("text/html");
-  await expect(page.getByRole("heading", { name: "登壇ライブラリ" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /“その会社らしさ”で\s*輝く日本を。/ })).toBeVisible();
+  await expect(page.getByText("THE AMBITION｜目指す世界", { exact: true })).toBeVisible();
+  await expect(page.getByText(
+    "AIでみんなが似てくる時代に、理念・哲学・職人性という“らしさ”を磨き、勇者（経営者）たちと共に輝く日本をつくる。",
+    { exact: true },
+  )).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "登壇ライブラリ" })).toBeVisible();
   await expect(page.getByText("西山朝子 / THA", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /会社に、もう一人の社長がいたら。/ })).toHaveAttribute(
     "href",

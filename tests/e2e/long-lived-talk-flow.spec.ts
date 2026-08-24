@@ -137,3 +137,36 @@ test("is readable on mobile and projector and becomes static with reduced motion
   await expect(page.locator("[data-scene-motion]").first()).toHaveAttribute("data-motion-state", "static");
   await expect(page.locator("[data-scroll-progress]")).toHaveCSS("transform", "none");
 });
+
+test("keeps case-study messages within a two-line mobile and projector hierarchy", async ({ page }) => {
+  for (const viewport of [
+    { label: "mobile", width: 390, height: 844 },
+    { label: "projector", width: 1920, height: 1080 },
+  ] as const) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto(talkPath);
+
+    for (const sceneId of ["case-toushirou", "case-ohga", "case-kikkoman"] as const) {
+      const scene = page.locator(`#${sceneId}`);
+      const heading = scene.getByRole("heading", { level: 2 });
+      await expect(heading).toBeVisible();
+
+      const metrics = await heading.evaluate((element) => {
+        const style = window.getComputedStyle(element);
+        const lineHeight = Number.parseFloat(style.lineHeight);
+        const fontSize = Number.parseFloat(style.fontSize);
+        return {
+          fontSize,
+          lines: Math.round(element.getBoundingClientRect().height / lineHeight),
+        };
+      });
+
+      expect(metrics.fontSize, `${viewport.label} ${sceneId} heading font size`).toBeLessThanOrEqual(64);
+      expect(metrics.lines, `${viewport.label} ${sceneId} heading line count`).toBeLessThanOrEqual(2);
+      if (viewport.label === "projector") {
+        expect(await scene.evaluate((element) => element.getBoundingClientRect().height), `${sceneId} scene height`)
+          .toBeLessThanOrEqual(1080);
+      }
+    }
+  }
+});
