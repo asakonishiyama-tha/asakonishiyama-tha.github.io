@@ -1,0 +1,4 @@
+interface:
+  display_name: "THA登壇体験デザイン・運用"
+  short_description: "西山社長とHookedなWeb登壇を相談し、安全に制作・QAする"
+  default_prompt: "Use $managing-tha-talks to help me shape this THA Talk through simple questions, propose A/B Hooked concepts, verify the real page, and stop at the next approval gate."

@@ -1,0 +1,110 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build and scan public-source candidate
+        env:
+          PUBLIC_SOURCE_CANDIDATE: ${{ runner.temp }}/public-source-candidate
+        run: |-
+          mkdir -m 700 -- "$PUBLIC_SOURCE_CANDIDATE"
+          npm run release:prepare -- --output "$PUBLIC_SOURCE_CANDIDATE"
+          node "$PUBLIC_SOURCE_CANDIDATE/scripts/scan-release-safety.mjs" "$PUBLIC_SOURCE_CANDIDATE"
+      - name: Validate content
+        run: npm run validate:content
+      - name: Validate assets
+        run: npm run validate:assets
+      - name: Run unit tests
+        run: npm test
+      - name: Check types
+        run: npm run typecheck
+      - name: Build static site
+        env:
+          NEXT_PUBLIC_SITE_URL: https://asakonishiyama-tha.github.io
+          NEXT_PUBLIC_PRIVACY_POLICY_URL: ${{ vars.NEXT_PUBLIC_PRIVACY_POLICY_URL || '' }}
+          NEXT_PUBLIC_GAS_WEB_APP_URL: ${{ vars.NEXT_PUBLIC_GAS_WEB_APP_URL || '' }}
+        run: npm run build
+      - name: Verify static site
+        run: npm run verify:static
+      - name: Scan static output
+        run: npm run release:scan -- out
+      - name: Run browser tests
+        run: npm run test:e2e
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: out
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+
+  verify:
+    if: github.ref == 'refs/heads/main'
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out verified source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js for hosted verification
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Verify hosted deployment
+        env:
+          APPROVED_GAS_WEB_APP_URL: ${{ vars.NEXT_PUBLIC_GAS_WEB_APP_URL || '' }}
+          APPROVED_PRIVACY_POLICY_URL: ${{ vars.NEXT_PUBLIC_PRIVACY_POLICY_URL || '' }}
+          DEPLOYED_PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |-
+          node scripts/verify-hosted-deployment.mjs \
+            --base-url "$DEPLOYED_PAGE_URL" \
+            --gas-web-app-url "$APPROVED_GAS_WEB_APP_URL" \
+            --privacy-policy-url "$APPROVED_PRIVACY_POLICY_URL"

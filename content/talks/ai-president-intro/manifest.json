@@ -1,0 +1,85 @@
+{
+  "formatVersion": 2,
+  "slug": "ai-president-intro",
+  "title": "会社に、もう一人の社長がいたら。",
+  "speaker": "西山朝子",
+  "eventName": "THA AI社長 登壇セッション",
+  "published": true,
+  "questions": [
+    {
+      "id": "ai-adoption",
+      "prompt": "AIは、経営のどこまで入っていますか。",
+      "options": [
+        { "label": "まだ利用していない", "score": 0 },
+        { "label": "個人の業務効率化で利用している", "score": 1 },
+        { "label": "部門の仕組みとして利用している", "score": 2 },
+        { "label": "経営判断にも利用している", "score": 3 }
+      ]
+    },
+    {
+      "id": "knowledge-retention",
+      "prompt": "AIを使った後、会社に何が残っていますか。",
+      "options": [
+        { "label": "再利用できるものは残っていない", "score": 0 },
+        { "label": "個人のプロンプトやメモが残っている", "score": 1 },
+        { "label": "チームで使える手順や知識が残っている", "score": 2 },
+        { "label": "判断記録と採否理由が会社の資産として残っている", "score": 3 }
+      ]
+    },
+    {
+      "id": "continuity",
+      "prompt": "AI活用を継続する仕組みはありますか。",
+      "options": [
+        { "label": "必要なときだけ各自で使う", "score": 0 },
+        { "label": "推進する担当者がいる", "score": 1 },
+        { "label": "共有ルールと定期的な振り返りがある", "score": 2 },
+        { "label": "経営指標と改善サイクルに組み込まれている", "score": 3 }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "stage": "explore",
+      "title": "探索期",
+      "rpgSubtitle": "旅立ちの勇者",
+      "description": "AI活用の入口に立ち、自社に合う最初の用途を見つける段階です。",
+      "nextQuest": "一つの定型業務を選び、AIで試す時間を今週中に確保しましょう。"
+    },
+    {
+      "stage": "experiment",
+      "title": "実験期",
+      "rpgSubtitle": "魔法を試す勇者",
+      "description": "個人の活用が生まれ始めています。再現できる学びを会社に残す段階です。",
+      "nextQuest": "成果が出たプロンプトやメモを一つ、チームで共有しましょう。"
+    },
+    {
+      "stage": "systemize",
+      "title": "仕組み化期",
+      "rpgSubtitle": "ギルドを率いる勇者",
+      "description": "チームで使える知識と手順があります。継続的に改善する仕組みを整える段階です。",
+      "nextQuest": "共有ルールと月次の振り返りを、次の会議予定に組み込みましょう。"
+    },
+    {
+      "stage": "integrate",
+      "title": "経営統合期",
+      "rpgSubtitle": "AI社長と共創する勇者",
+      "description": "AI活用が経営判断と改善サイクルに接続されています。組織の判断資産を磨く段階です。",
+      "nextQuest": "重要な経営判断を一つ選び、採否理由と学びを次の改善に接続しましょう。"
+    }
+  ],
+  "lead": {
+    "downloadEnabled": true,
+    "downloadUrl": "/downloads/tha-ai-management-action-sheet.pdf",
+    "additionalDownloads": [
+      {
+        "label": "講演資料をダウンロード",
+        "url": "/downloads/ai-philosophy-for-smb.pdf"
+      }
+    ],
+    "formHeading": "次の一歩を、会社の資産にする。",
+    "consentText": "入力いただいた情報は、資料送付またはAI活用相談の対応にのみ使用します。",
+    "thankYouMessage": "お申し込みを受け付けました。",
+    "consultationCta": "AI活用を相談する"
+  },
+  "sourceLinks": []
+}

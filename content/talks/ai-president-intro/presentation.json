@@ -1,0 +1,60 @@
+{
+  "slug": "ai-president-intro",
+  "scenes": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "heading": "会社に、もう一人の社長がいたら。",
+      "supportingText": "AIを、時短で終わらせず、経営の判断資産に変える。",
+      "evidenceRefs": ["tha-ai-management-viewpoint"]
+    },
+    {
+      "id": "crisis",
+      "type": "statement",
+      "statement": "AI利用が個人の時短だけで終わると、会社には何も残らない。",
+      "emphasizedText": "会社に残る仕組み",
+      "evidenceRefs": []
+    },
+    {
+      "id": "stages",
+      "type": "cards",
+      "heading": "使うたび、会社に何が残るか。",
+      "cards": [
+        {
+          "title": "探索",
+          "description": "まず一人ひとりがAIの可能性を確かめる。"
+        },
+        {
+          "title": "実験",
+          "description": "再現できる使い方をチームに持ち寄る。"
+        },
+        {
+          "title": "仕組み化",
+          "description": "知識と手順を共有し、振り返りを続ける。"
+        },
+        {
+          "title": "経営統合",
+          "description": "判断記録を経営の改善サイクルへつなぐ。"
+        }
+      ],
+      "evidenceRefs": []
+    },
+    {
+      "id": "quest",
+      "type": "questCta",
+      "heading": "3問、60秒で自社のAI経営ステージがわかる。",
+      "description": "個人情報を入力せずに、次に試す行動を確認できます。",
+      "buttonLabel": "60秒診断を始める",
+      "evidenceRefs": []
+    },
+    {
+      "id": "lead",
+      "type": "leadCta",
+      "heading": "次の一歩を、会社の資産にする。",
+      "description": "アクションシートの資料請求、またはAI活用相談をご利用ください。",
+      "downloadLabel": "詳細資料を請求する",
+      "consultationLabel": "AI活用を相談する",
+      "evidenceRefs": []
+    }
+  ]
+}

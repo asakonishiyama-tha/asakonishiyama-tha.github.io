@@ -1,0 +1,34 @@
+{
+  "directories": [
+    "app",
+    "components",
+    "content",
+    "gas",
+    "lib",
+    "public",
+    "scripts",
+    "tests"
+  ],
+  "files": [
+    ".agents/skills/managing-tha-talks/SKILL.md",
+    ".agents/skills/managing-tha-talks/agents/openai.yaml",
+    ".agents/skills/managing-tha-talks/references/project-contract.md",
+    ".claude/skills/managing-tha-talks/SKILL.md",
+    ".env.example",
+    ".github/workflows/ci.yml",
+    ".github/workflows/pages.yml",
+    ".gitignore",
+    ".nvmrc",
+    "README.md",
+    "docs/launch-checklist.md",
+    "next-env.d.ts",
+    "next.config.ts",
+    "package-lock.json",
+    "package.json",
+    "playwright.config.ts",
+    "release/public-files.json",
+    "release/secret-rules.json",
+    "tsconfig.json",
+    "vitest.config.ts"
+  ]
+}

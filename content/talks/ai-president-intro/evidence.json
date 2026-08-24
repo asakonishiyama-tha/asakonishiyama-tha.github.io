@@ -1,0 +1,13 @@
+{
+  "slug": "ai-president-intro",
+  "items": [
+    {
+      "id": "tha-ai-management-viewpoint",
+      "kind": "tha-viewpoint",
+      "claim": "AIを、時短で終わらせず、経営の判断資産に変える。",
+      "provenance": "tha-synthesis",
+      "lastVerifiedAt": "2026-08-23",
+      "verifiedBy": "THA"
+    }
+  ]
+}

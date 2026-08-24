@@ -1,0 +1,415 @@
+.document {
+  --blue: #2360f0;
+  --navy: #1f2a44;
+  --yellow: #ffe93c;
+  background: #edf2fb;
+  color: var(--navy);
+  font-size: 16pt;
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 24px 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.printHeader,
+.printFooter {
+  display: none;
+}
+
+.cover,
+.chapter,
+.referencePage,
+.closingPage {
+  background: #fff;
+  box-shadow: 0 18px 50px rgb(31 42 68 / 12%);
+  margin: 0 auto 24px;
+  max-width: 210mm;
+  min-height: 297mm;
+  overflow: hidden;
+  padding: 20mm 19mm;
+  position: relative;
+}
+
+.cover {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.cover::before,
+.chapter::before {
+  background: var(--blue);
+  content: "";
+  height: 5mm;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.coverCopy {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow,
+.chapterNumber,
+.referenceKind {
+  color: var(--blue);
+  font-size: 10pt;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  margin: 0 0 6mm;
+}
+
+.cover h1 {
+  font-size: 34pt;
+  letter-spacing: -0.055em;
+  line-height: 1.18;
+  margin: 0;
+  max-width: 155mm;
+}
+
+.cover h1,
+.subtitle,
+.chapter h2 {
+  line-break: strict;
+  text-wrap: balance;
+  word-break: auto-phrase;
+}
+
+.subtitle {
+  border-left: 5px solid var(--yellow);
+  font-size: 19pt;
+  font-weight: 800;
+  line-height: 1.55;
+  margin: 8mm 0 0;
+  padding-left: 5mm;
+}
+
+.summary {
+  font-size: 16pt;
+  margin: 7mm 0 0;
+  max-width: 160mm;
+}
+
+.coverMeta {
+  display: grid;
+  font-size: 11pt;
+  gap: 2mm;
+  grid-template-columns: 1fr 1fr;
+  margin: 7mm 0 0;
+}
+
+.coverMeta div {
+  border-top: 1px solid #ccd7ed;
+  padding-top: 2mm;
+}
+
+.coverMeta dt {
+  color: var(--blue);
+  font-size: 8pt;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.coverMeta dd {
+  font-weight: 800;
+  margin: 1mm 0 0;
+}
+
+.figure {
+  break-inside: avoid;
+  margin: 8mm 0 0;
+}
+
+.figure img {
+  display: block;
+  height: 58mm;
+  object-fit: cover;
+  width: 100%;
+}
+
+.coverFigure {
+  align-self: end;
+}
+
+.coverFigure img {
+  height: 70mm;
+}
+
+.figure figcaption {
+  border-left: 3px solid var(--blue);
+  color: #4d5c78;
+  display: grid;
+  font-size: 10.5pt;
+  gap: 1mm;
+  line-height: 1.55;
+  margin-top: 2.5mm;
+  padding-left: 3mm;
+}
+
+.chapterNumber {
+  margin-top: 2mm;
+}
+
+.chapter h2 {
+  break-after: avoid-page;
+  font-size: 25pt;
+  letter-spacing: -0.045em;
+  line-height: 1.3;
+  margin: 0 0 7mm;
+  padding-bottom: 5mm;
+  position: relative;
+}
+
+.chapter h2::after {
+  background: var(--yellow);
+  bottom: 0;
+  content: "";
+  height: 3px;
+  left: 0;
+  position: absolute;
+  width: 22mm;
+}
+
+.evidenceLabels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2mm;
+  margin: -2mm 0 5mm;
+}
+
+.evidenceLabels span {
+  background: var(--navy);
+  color: #fff;
+  font-size: 9pt;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  padding: 1.5mm 3mm;
+}
+
+.chapterBody p {
+  font-size: 16pt;
+  margin: 0 0 5mm;
+  orphans: 3;
+  widows: 3;
+}
+
+.takeaway,
+.closingAction {
+  background: #edf3ff;
+  border-left: 5px solid var(--blue);
+  break-inside: avoid;
+  margin-top: 8mm;
+  padding: 5mm 6mm;
+}
+
+.calloutLabel {
+  color: var(--blue);
+  display: block;
+  font-size: 9pt;
+  letter-spacing: 0.14em;
+  margin: 0;
+}
+
+.takeaway p:not(.calloutLabel),
+.closingAction p:not(.calloutLabel) {
+  font-size: 16pt;
+  font-weight: 800;
+  margin: 1.5mm 0 0;
+}
+
+.inlineReferences {
+  color: #5b6680;
+  font-size: 10pt;
+  font-weight: 800;
+  margin: 5mm 0 0;
+}
+
+.referenceSection {
+  margin-top: 9mm;
+}
+
+.referenceContinuation {
+  color: var(--blue);
+  font-size: 13pt;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin: 0 0 5mm;
+}
+
+.referenceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.referenceItem {
+  border-top: 2px solid #d6e0f3;
+  break-inside: avoid;
+  margin: 0;
+  page-break-inside: avoid;
+  padding: 6mm 0 7mm 13mm;
+  position: relative;
+}
+
+.referenceNumber {
+  color: var(--blue);
+  font-size: 13pt;
+  font-weight: 900;
+  left: 0;
+  position: absolute;
+  top: 6mm;
+}
+
+.referenceKind {
+  font-size: 9pt;
+  margin: 0 0 1mm;
+}
+
+.referenceItem cite {
+  display: block;
+  font-size: 16pt;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.referenceItem a {
+  color: var(--blue);
+  display: block;
+  font-size: 12pt;
+  line-height: 1.45;
+  margin-top: 2mm;
+  overflow-wrap: anywhere;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.referenceMeta {
+  display: grid;
+  font-size: 11pt;
+  font-weight: 700;
+  gap: 2mm 7mm;
+  grid-template-columns: repeat(3, max-content);
+  margin: 2mm 0 0;
+}
+
+.permissionNote {
+  color: #4d5c78;
+  font-size: 11pt;
+  line-height: 1.55;
+  margin: 2mm 0 0;
+}
+
+.riskChapter {
+  background: linear-gradient(145deg, #fff 0 62%, #fff3f8 100%);
+}
+
+.riskChapter .chapterNumber {
+  color: #c2185b;
+}
+
+.riskChapter .takeaway {
+  border-left-color: #c2185b;
+}
+
+@media print {
+  .document {
+    background: #fff;
+    font-size: 16pt;
+    padding: 0;
+  }
+
+  .printHeader,
+  .printFooter {
+    align-items: center;
+    color: var(--navy);
+    display: flex;
+    font-family: Arial, sans-serif;
+    font-size: 8pt;
+    justify-content: space-between;
+    left: 0;
+    line-height: 1;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    white-space: nowrap;
+    z-index: 100;
+  }
+
+  .printHeader {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    top: 0;
+  }
+
+  .printHeader span:first-child {
+    color: var(--blue);
+  }
+
+  .printFooter {
+    bottom: 0;
+  }
+
+  .cover,
+  .chapter,
+  .referencePage,
+  .closingPage {
+    box-sizing: border-box;
+    box-shadow: none;
+    height: 284mm;
+    margin: 0;
+    max-width: none;
+    min-height: 0;
+    overflow: visible;
+    padding: 12mm 0 14mm;
+  }
+
+  .cover {
+    break-after: page;
+  }
+
+  .chapter,
+  .referencePage {
+    break-after: page;
+  }
+
+  .referencesAppendix {
+    break-before: page;
+  }
+
+  .closingPage {
+    background: #fff;
+    break-before: page;
+  }
+
+  .closingPage .closingAction {
+    background: #fff;
+    border-bottom: 2px solid #d6e0f3;
+    border-right: 2px solid #d6e0f3;
+    border-top: 2px solid #d6e0f3;
+    margin-top: 0;
+  }
+
+  .referenceSection {
+    margin-top: 0;
+  }
+
+  .cover::before,
+  .chapter::before {
+    display: none;
+  }
+
+  .referenceItem,
+  .figure,
+  .takeaway,
+  .closingAction {
+    break-inside: avoid-page;
+  }
+}
+
+@page {
+  size: A4;
+}
