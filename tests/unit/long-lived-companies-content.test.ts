@@ -47,6 +47,14 @@ describe("long-lived-companies Talk content", () => {
       "case-kikkoman", "evaporation-crisis", "two-risks", "company-is-people",
       "quest", "twenty-years-later", "lead",
     ]);
+    expect(talk?.scenes.find(({ id }) => id === "three-facts")).toMatchObject({
+      cards: expect.arrayContaining([
+        {
+          title: "41.3%",
+          description: "世界の100年企業に占める日本企業の割合（日経BPコンサルティング、2020年）。",
+        },
+      ]),
+    });
     expect(talk?.scenes.filter((scene) => "image" in scene).map((scene) => ({
       id: scene.id,
       image: "image" in scene ? scene.image : undefined,
