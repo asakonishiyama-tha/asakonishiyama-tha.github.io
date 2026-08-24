@@ -22,6 +22,30 @@ const pdfs = {
     )),
     sha256: "1daf899cd4a6fdffbf8439b456f9218a7b62ef6ca43f609a218e4ffad3e1db99",
   },
+  "/site/downloads/long-lived-companies-experiment.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf")),
+    sha256: "1f70632d9d5d95292510c0b64b22ddbb9922cf2777125f9df77a41e311293680",
+  },
+  "/site/downloads/long-lived-companies-explore.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf")),
+    sha256: "827e80ef3034f4882a979b10f5b4a9833b1f725a5c31ac065b6717d03db51d20",
+  },
+  "/site/downloads/long-lived-companies-handout.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf")),
+    sha256: "e60dfbd48655e125ab4ec37e398cab66ed3625caca4a8d275b4c28e02cfae214",
+  },
+  "/site/downloads/long-lived-companies-integrate.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf")),
+    sha256: "07a9f07ad7957e61389d04bece52670317a9adcfe430e9a8997d1151bbf19275",
+  },
+  "/site/downloads/long-lived-companies-systemize.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf")),
+    sha256: "00909ae94eed37cc2f1921e19798a553337ec50280c2b32898f8d627cd2f19ed",
+  },
+  "/site/downloads/long-lived-companies-talk.pdf": {
+    bytes: await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf")),
+    sha256: "a995f8747bbe8891738501dc8d925ff413b5a9aba8fa9fd30abd5b802c32a3c4",
+  },
 } as const;
 
 type HostedVerifierModule = typeof import("../../scripts/verify-hosted-deployment.mjs");
@@ -45,6 +69,10 @@ function siteResponse(url: URL): Response {
     "/site/talks/ai-president-intro/quest/",
     "/site/talks/ai-president-intro/result/",
     "/site/talks/ai-president-intro/handout/",
+    "/site/talks/long-lived-companies/",
+    "/site/talks/long-lived-companies/quest/",
+    "/site/talks/long-lived-companies/result/",
+    "/site/talks/long-lived-companies/handout/",
   ]);
   if (successPaths.has(url.pathname)) {
     return new Response("<!doctype html><title>THA</title>", {
@@ -64,7 +92,7 @@ afterEach(() => {
 });
 
 describe("hosted deployment verifier", () => {
-  it("checks five routes, two exact PDFs, eight forbidden paths, and a redirected HTTPS privacy page", async () => {
+  it("checks nine routes, eight exact PDFs, seven forbidden paths, and a redirected HTTPS privacy page", async () => {
     const verifier = await loadVerifier();
     expect(verifier?.verifyHostedDeployment).toBeTypeOf("function");
     if (!verifier) return;
@@ -92,18 +120,18 @@ describe("hosted deployment verifier", () => {
     });
 
     expect(result).toEqual({
-      canonicalRoutes: 5,
-      forbiddenRoutes: 8,
-      pdfs: 2,
+      canonicalRoutes: 9,
+      forbiddenRoutes: 7,
+      pdfs: 8,
       privacy: "verified",
-      requests: 17,
+      requests: 26,
     });
-    expect(requests).toHaveLength(17);
+    expect(requests).toHaveLength(26);
     expect(requests.every((request) => request.startsWith(baseUrl)
       || request.startsWith("https://privacy.example/"))).toBe(true);
     expect(requests).toContain(`${baseUrl}api/`);
     expect(requests).toContain(`${baseUrl}404.html`);
-    expect(requests).toContain(`${baseUrl}talks/${["long", "lived", "companies"].join("-")}/`);
+    expect(requests).toContain(`${baseUrl}talks/long-lived-companies/`);
     expect(events.join("\n")).not.toContain(baseUrl);
     expect(events.join("\n")).not.toContain(gasWebAppUrl);
     expect(events.join("\n")).not.toContain(privacyPolicyUrl);
@@ -121,7 +149,7 @@ describe("hosted deployment verifier", () => {
       gasWebAppUrl: "",
       privacyPolicyUrl: "",
       attempts: 1,
-    })).resolves.toMatchObject({ privacy: "skipped", requests: 15 });
+    })).resolves.toMatchObject({ privacy: "skipped", requests: 24 });
   });
 
   it.each([
@@ -197,7 +225,7 @@ describe("hosted deployment verifier", () => {
     });
 
     expect(rootAttempts).toBe(2);
-    expect(result.requests).toBe(16);
+    expect(result.requests).toBe(25);
   });
 
   it("bounds redirect requests and rejects a redirect outside the deployed base", async () => {

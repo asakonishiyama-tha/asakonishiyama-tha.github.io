@@ -33,6 +33,14 @@ const expectedTalkFiles = [
   "content/talks/ai-president-intro/worksheets/experiment.json",
   "content/talks/ai-president-intro/worksheets/systemize.json",
   "content/talks/ai-president-intro/worksheets/integrate.json",
+  "content/talks/long-lived-companies/manifest.json",
+  "content/talks/long-lived-companies/presentation.json",
+  "content/talks/long-lived-companies/handout.json",
+  "content/talks/long-lived-companies/evidence.json",
+  "content/talks/long-lived-companies/worksheets/explore.json",
+  "content/talks/long-lived-companies/worksheets/experiment.json",
+  "content/talks/long-lived-companies/worksheets/systemize.json",
+  "content/talks/long-lived-companies/worksheets/integrate.json",
 ] as const;
 
 const exactApprovalGates = [
@@ -71,10 +79,16 @@ const requiredOperatorCommands = [
   "npm run release:scan -- \"$tha_candidate_dir\"",
 ] as const;
 
-const expectedPdfHashes = {
-  "ai-philosophy-for-smb.pdf": "8fb7825ad1fe2fdd12c48d5d75453b17b59d7b8668f1ba60920f9625aff86850",
-  "tha-ai-management-action-sheet.pdf": "1daf899cd4a6fdffbf8439b456f9218a7b62ef6ca43f609a218e4ffad3e1db99",
-} as const;
+const expectedPdfFiles = [
+  ["ai-president-intro", "ai-philosophy-for-smb.pdf", "8fb7825ad1fe2fdd12c48d5d75453b17b59d7b8668f1ba60920f9625aff86850"],
+  ["ai-president-intro", "tha-ai-management-action-sheet.pdf", "1daf899cd4a6fdffbf8439b456f9218a7b62ef6ca43f609a218e4ffad3e1db99"],
+  ["long-lived-companies", "long-lived-companies-experiment.pdf", "1f70632d9d5d95292510c0b64b22ddbb9922cf2777125f9df77a41e311293680"],
+  ["long-lived-companies", "long-lived-companies-explore.pdf", "827e80ef3034f4882a979b10f5b4a9833b1f725a5c31ac065b6717d03db51d20"],
+  ["long-lived-companies", "long-lived-companies-handout.pdf", "e60dfbd48655e125ab4ec37e398cab66ed3625caca4a8d275b4c28e02cfae214"],
+  ["long-lived-companies", "long-lived-companies-integrate.pdf", "07a9f07ad7957e61389d04bece52670317a9adcfe430e9a8997d1151bbf19275"],
+  ["long-lived-companies", "long-lived-companies-systemize.pdf", "00909ae94eed37cc2f1921e19798a553337ec50280c2b32898f8d627cd2f19ed"],
+  ["long-lived-companies", "long-lived-companies-talk.pdf", "a995f8747bbe8891738501dc8d925ff413b5a9aba8fa9fd30abd5b802c32a3c4"],
+] as const;
 
 async function readRepositoryFile(relativePath: string): Promise<string> {
   try {
@@ -128,15 +142,15 @@ function publicFormAssignmentBlocks(source: string): Array<Record<string, string
 }
 
 describe("non-engineer launch documentation", () => {
-  it("explains how to edit and preview the only approved Talk without a CMS", async () => {
+  it("explains how to edit and preview both approved Talks without a CMS", async () => {
     const readme = await readRepositoryFile("README.md");
 
     expect(readme).toContain("https://asakonishiyama-tha.github.io/");
-    expect(readme).toMatch(/公開対象(?:のTalk)?は[^\n]*`ai-president-intro`[^\n]*(?:だけ|のみ)/);
+    expect(readme).toMatch(/公開対象(?:のTalk)?は[^\n]*`ai-president-intro`[^\n]*`long-lived-companies`/);
     expect(readme).toMatch(/TinaCMS[^\n]*(?:使いません|ありません|利用しません)/);
     expect(readme).toMatch(/CMS[^\n]*(?:使わず|なし|不要)/);
     for (const file of expectedTalkFiles) expect(readme).toContain(`\`${file}\``);
-    expect(readme).toContain("`content/talks/ai-president-intro/assets/`");
+    expect(readme).toContain("`content/talks/<slug>/assets/`");
     expect(readme).toMatch(/`public\/`[^\n]*(?:直接|手作業)[^\n]*(?:置か|追加し|コピーし).*ない/);
     for (const command of ["npm ci", "npm run dev", "npm run build", "npm run preview:static"]) {
       expect(readme).toContain(command);
@@ -156,13 +170,13 @@ describe("non-engineer launch documentation", () => {
     expect(checklist).toContain("`https://asakonishiyama-tha.github.io/`");
     expect(checklist).toContain("公開設定: `Public`");
     expect(checklist).toContain("公開ブランチ: `main`");
-    expect(checklist).toMatch(/初回(?:公開)?Talk:[^\n]*`ai-president-intro`[^\n]*(?:だけ|のみ)/);
+    expect(checklist).toMatch(/公開Talk:[^\n]*`ai-president-intro`[^\n]*`long-lived-companies`/);
     expect(approvalLines).toEqual(exactApprovalGates.map((title, index) => ({
       number: index + 1,
       title,
     })));
-    expect(checklist).toMatch(/今回[^\n]*承認[^\n]*ゲート1[^\n]*(?:だけ|のみ)/);
-    expect(checklist).toMatch(/ゲート2(?:〜|～|-)10[^\n]*(?:未承認|ブロック)/);
+    expect(checklist).toMatch(/ゲート1(?:〜|～|-)5[^\n]*(?:完了|実施済み)/);
+    expect(checklist).toMatch(/ゲート6(?:〜|～|-)10[^\n]*(?:未承認|未構成|ブロック)/);
     expect(checklist).toMatch(/commit[^\n]*(?:外部操作|push|公開)[^\n]*(?:一切承認しません|承認になりません)/i);
   });
 
@@ -296,17 +310,17 @@ describe("non-engineer launch documentation", () => {
     for (const requirement of ["キーボード", "reduced-motion", "handout", "コンソール", "横スクロール"]) {
       expect(checklist).toContain(requirement);
     }
-    for (const [filename, hash] of Object.entries(expectedPdfHashes)) {
+    for (const [slug, filename, hash] of expectedPdfFiles) {
       expect(checklist).toContain(filename);
       expect(checklist).toContain(hash);
       const source = await readFile(
-        path.join(repositoryRoot, "content/talks/ai-president-intro/assets/downloads", filename),
+        path.join(repositoryRoot, "content/talks", slug, "assets/downloads", filename),
       );
       expect(createHash("sha256").update(source).digest("hex")).toBe(hash);
     }
     expect(checklist).toMatch(/`package\.json`[^\n]*`ISC`/);
     expect(checklist).toMatch(/(?:standalone|単独|別途)[^\n]*(?:license|ライセンス)[^\n]*(?:オーナー|法務|legal)[^\n]*(?:判断|決定)/i);
-    expect(checklist).toMatch(/(?:未構成|未設定|未接続|未作成)[^\n]*(?:GitHub|Pages|GAS|Sheet|自動返信|Slack)/);
+    expect(checklist).toMatch(/(?:本番GAS|GAS)[^\n]*(?:Sheet|自動返信|Slack)[^\n]*(?:未構成|未設定|未接続)/);
   });
 
   it("documents the supported release host, disabled form defaults, scaling risk, and dependency hold", async () => {
@@ -324,7 +338,7 @@ describe("non-engineer launch documentation", () => {
     expect(checklist).toMatch(/next@15\.5\.23[^\n]*postcss@8\.4\.31/);
     expect(checklist).toMatch(/next@15\.5\.23[^\n]*sharp@0\.34\.5/);
     expect(checklist).toMatch(/next@16\.3\.2[^\n]*(?:major|メジャー)/i);
-    expect(checklist).toMatch(/(?:公開|publication)[^\n]*(?:保留|hold|ブロック)[^\n]*(?:security|セキュリティ)[^\n]*(?:受容|accept|upgrade|アップグレード)/i);
+    expect(checklist).toMatch(/(?:既知リスク|security|セキュリティ)[^\n]*(?:受容|accept)[^\n]*(?:依存更新|upgrade|アップグレード|別作業)/i);
   });
 
   it("keeps every authoritative launch document on the blank-or-approved-pair form contract", async () => {

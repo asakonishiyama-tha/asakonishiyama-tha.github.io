@@ -8,6 +8,10 @@ const canonicalRoutes = [
   "talks/ai-president-intro/quest/",
   "talks/ai-president-intro/result/",
   "talks/ai-president-intro/handout/",
+  "talks/long-lived-companies/",
+  "talks/long-lived-companies/quest/",
+  "talks/long-lived-companies/result/",
+  "talks/long-lived-companies/handout/",
 ];
 
 const approvedPdfs = [
@@ -19,6 +23,30 @@ const approvedPdfs = [
     path: "downloads/tha-ai-management-action-sheet.pdf",
     sha256: "1daf899cd4a6fdffbf8439b456f9218a7b62ef6ca43f609a218e4ffad3e1db99",
   },
+  {
+    path: "downloads/long-lived-companies-experiment.pdf",
+    sha256: "1f70632d9d5d95292510c0b64b22ddbb9922cf2777125f9df77a41e311293680",
+  },
+  {
+    path: "downloads/long-lived-companies-explore.pdf",
+    sha256: "827e80ef3034f4882a979b10f5b4a9833b1f725a5c31ac065b6717d03db51d20",
+  },
+  {
+    path: "downloads/long-lived-companies-handout.pdf",
+    sha256: "e60dfbd48655e125ab4ec37e398cab66ed3625caca4a8d275b4c28e02cfae214",
+  },
+  {
+    path: "downloads/long-lived-companies-integrate.pdf",
+    sha256: "07a9f07ad7957e61389d04bece52670317a9adcfe430e9a8997d1151bbf19275",
+  },
+  {
+    path: "downloads/long-lived-companies-systemize.pdf",
+    sha256: "00909ae94eed37cc2f1921e19798a553337ec50280c2b32898f8d627cd2f19ed",
+  },
+  {
+    path: "downloads/long-lived-companies-talk.pdf",
+    sha256: "a995f8747bbe8891738501dc8d925ff413b5a9aba8fa9fd30abd5b802c32a3c4",
+  },
 ];
 
 const forbiddenRoutes = [
@@ -26,7 +54,6 @@ const forbiddenRoutes = [
   "admin/",
   "live/",
   "presenter/",
-  `talks/${["long", "lived", "companies"].join("-")}/`,
   "__tha-hosted-verifier-unknown__/",
   "404/",
   "404.html",

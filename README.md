@@ -4,8 +4,8 @@ THAの登壇体験を、縦方向に物語が進むWebページとして提供�
 
 ## 現在地
 
-- 正規URLの予定は `https://asakonishiyama-tha.github.io/` です。公開リポジトリとGitHub PagesのActions設定は作成済みですが、`main`からの一般公開と正規URLのhosted確認はまだ承認・実行していません。
-- 公開対象のTalkは `ai-president-intro` だけです。
+- 正規URLは `https://asakonishiyama-tha.github.io/` です。公開リポジトリ、GitHub Pages、`main`からの一般公開、hosted確認は実施済みです。
+- 公開対象のTalkは `ai-president-intro` と `long-lived-companies` です。
 - 資料請求・相談フォームは、GASが未設定の通常のローカル確認と現在の公開用ビルドでは送信できません。
 - 本番GAS、Sheet、通知trigger、自動返信、Slackは未接続です。ローカルの検証完了やreview branchへのpushは、`main`公開や外部接続を許可しません。
 - 詳しい公開手順と承認の境界は [`docs/launch-checklist.md`](docs/launch-checklist.md) にあります。
@@ -37,13 +37,13 @@ npm ci
 npm run dev
 ```
 
-ブラウザで `http://localhost:3000/talks/ai-president-intro/` を開きます。確認が終わったら、コマンドを実行した画面へ戻って `Ctrl+C` を押し、ローカルサーバーを止めます。
+ブラウザで `http://localhost:3000/talks/ai-president-intro/` と `http://localhost:3000/talks/long-lived-companies/` を開きます。確認が終わったら、コマンドを実行した画面へ戻って `Ctrl+C` を押し、ローカルサーバーを止めます。
 
 ## CMSを使わないTalk編集
 
 この公開版ではTinaCMSを使いません。CMSなしで、既存のprivate/ローカル作業領域にあるTalk bundleのJSONをテキストエディタで編集します。下書きを公開リポジトリへ直接置かないでください。
 
-`ai-president-intro` の正本は次の8ファイルです。すべての `slug` はフォルダ名と同じ値にします。
+各Talkの正本は次の8ファイルです。`<slug>` は `ai-president-intro` または `long-lived-companies` で、すべての `slug` はフォルダ名と同じ値にします。
 
 - `content/talks/ai-president-intro/manifest.json` — タイトル、登壇者、3問、4結果、フォームとPDFへのリンク
 - `content/talks/ai-president-intro/presentation.json` — 縦スクロールで表示する登壇本文
@@ -53,6 +53,17 @@ npm run dev
 - `content/talks/ai-president-intro/worksheets/experiment.json` — 実験期のアクションシート
 - `content/talks/ai-president-intro/worksheets/systemize.json` — 仕組み化期のアクションシート
 - `content/talks/ai-president-intro/worksheets/integrate.json` — 経営統合期のアクションシート
+
+老舗企業Talkも同じ8ファイル構成です。
+
+- `content/talks/long-lived-companies/manifest.json`
+- `content/talks/long-lived-companies/presentation.json`
+- `content/talks/long-lived-companies/handout.json`
+- `content/talks/long-lived-companies/evidence.json`
+- `content/talks/long-lived-companies/worksheets/explore.json`
+- `content/talks/long-lived-companies/worksheets/experiment.json`
+- `content/talks/long-lived-companies/worksheets/systemize.json`
+- `content/talks/long-lived-companies/worksheets/integrate.json`
 
 編集するときは次の順番で進めます。
 
@@ -65,10 +76,10 @@ npm run dev
 
 ## 承認済み素材を置く場所
 
-承認済み素材は `content/talks/ai-president-intro/assets/` の中だけへ置きます。
+承認済み素材は対象Talkの `content/talks/<slug>/assets/` の中だけへ置きます。
 
-- PDF: `content/talks/ai-president-intro/assets/downloads/`
-- 画像・短い動画: `content/talks/ai-president-intro/assets/media/`
+- PDF: `content/talks/<slug>/assets/downloads/`
+- 画像・短い動画: `content/talks/<slug>/assets/media/`
 
 JSONからは `/downloads/ファイル名.pdf` または `/media/ファイル名.拡張子` として参照します。`public/` へ直接ファイルを追加しないでください。`npm run dev` と `npm run build` の前処理が、公開Talkから実際に参照される承認済み素材だけを `public/` に作り直します。参照されない素材、シンボリックリンク、許可外形式、容量超過素材がある場合は検証が止まります。
 
@@ -88,7 +99,7 @@ npm run verify:static
 npm run preview:static
 ```
 
-ブラウザで `http://127.0.0.1:3000/talks/ai-president-intro/` を開きます。確認が終わったら `Ctrl+C` で静的プレビューを止めます。`out/` は生成物なので手作業で編集しません。
+ブラウザで両方のTalk（`/talks/ai-president-intro/` と `/talks/long-lived-companies/`）を開きます。確認が終わったら `Ctrl+C` で静的プレビューを止めます。`out/` は生成物なので手作業で編集しません。
 
 ## フォームとローカルfake GAS
 

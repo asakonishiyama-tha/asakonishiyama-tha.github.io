@@ -157,12 +157,13 @@ describe("getTalk", () => {
 });
 
 describe("listPublishedTalks", () => {
-  it("lists only ai-president-intro from the launch content", async () => {
+  it("lists both approved Talks from the launch content", async () => {
     const talks = await listPublishedTalks();
 
-    expect(talks).toHaveLength(1);
+    expect(talks).toHaveLength(2);
     expect(talks).toMatchObject([
       { slug: "ai-president-intro", published: true },
+      { slug: "long-lived-companies", published: true },
     ]);
   });
 

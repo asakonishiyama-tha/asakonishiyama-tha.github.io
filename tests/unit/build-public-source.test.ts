@@ -47,11 +47,20 @@ const canonicalTalkDocuments = [
   "worksheets/systemize.json",
 ] as const;
 
+const approvedTalkSlugs = ["ai-president-intro", "long-lived-companies"] as const;
+
 const expectedSourceAssets = [
   "content/talks/ai-president-intro/assets/downloads/ai-philosophy-for-smb.pdf",
   "content/talks/ai-president-intro/assets/downloads/tha-ai-management-action-sheet.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf",
+  "content/talks/long-lived-companies/assets/media/long-lived-companies-hero.webp",
+  "content/talks/long-lived-companies/assets/media/long-lived-companies-time-assets.webp",
 ] as const;
-const excludedDraftSlug = ["long", "lived", "companies"].join("-");
 
 const temporaryRoots: string[] = [];
 
@@ -114,6 +123,7 @@ async function createOutputRoot(): Promise<{ outputRoot: string; temporaryRoot: 
 
 async function writeApprovedTalk(
   sourceRoot: string,
+  slug: string,
   {
     assets = {},
     references = [],
@@ -122,14 +132,14 @@ async function writeApprovedTalk(
     references?: string[];
   } = {},
 ): Promise<void> {
-  const bundleRoot = path.join(sourceRoot, "content", "talks", "ai-president-intro");
+  const bundleRoot = path.join(sourceRoot, "content", "talks", slug);
   for (const document of canonicalTalkDocuments) {
     const contents = document === "manifest.json"
       ? {
           formatVersion: 2,
           published: true,
           resources: references,
-          slug: "ai-president-intro",
+          slug,
         }
       : {};
     await writeSourceFile(
@@ -313,7 +323,7 @@ async function startOutputNameObserver(outputRoot: string): Promise<{
 }
 
 describe("buildPublicSource", () => {
-  it("copies the public application, one approved Talk, its two source PDFs, GAS, tests, and release tooling byte-for-byte", async () => {
+  it("copies the public application, two approved Talks, their source assets, GAS, tests, and release tooling byte-for-byte", async () => {
     const sourceRoot = await realpath(path.resolve(import.meta.dirname, "../.."));
     const { outputRoot } = await createOutputRoot();
 
@@ -333,6 +343,7 @@ describe("buildPublicSource", () => {
       "app/page.tsx",
       "components/story/StoryRenderer.tsx",
       "content/talks/ai-president-intro/manifest.json",
+      "content/talks/long-lived-companies/manifest.json",
       ...expectedSourceAssets,
       "gas/Code.gs",
       "gas/appsscript.json",
@@ -355,7 +366,7 @@ describe("buildPublicSource", () => {
     ]));
 
     const talkFiles = result.files.filter((file) => file.startsWith("content/talks/"));
-    expect(new Set(talkFiles.map((file) => file.split("/")[2]))).toEqual(new Set(["ai-president-intro"]));
+    expect(new Set(talkFiles.map((file) => file.split("/")[2]))).toEqual(new Set(approvedTalkSlugs));
     expect(talkFiles.filter((file) => file.includes("/assets/"))).toEqual([...expectedSourceAssets]);
     expect(result.files.filter((file) => file.startsWith("public/"))).toEqual(["public/.gitkeep"]);
     expect(result.files.some((file) => (
@@ -372,7 +383,6 @@ describe("buildPublicSource", () => {
       || file.startsWith("test-results/")
       || file.startsWith("playwright-report/")
       || file.endsWith(".tsbuildinfo")
-      || file.includes(excludedDraftSlug)
       || /(^|[/_.-])(live|presenter)([/_.-]|$)/i.test(file)
       || file.startsWith("app/api/")
       || file.startsWith("tina/")
@@ -395,15 +405,21 @@ describe("buildPublicSource", () => {
     await writeSourceFile(sourceRoot, "app/api/secret.ts", "server route");
     await writeSourceFile(sourceRoot, "app/live/control.ts", "live control");
     await writeSourceFile(sourceRoot, "app/presenter-console.tsx", "presenter control");
-    await writeApprovedTalk(sourceRoot, {
+    await writeApprovedTalk(sourceRoot, "ai-president-intro", {
       assets: {
         "downloads/approved.pdf": "approved bytes",
         "downloads/unreferenced.pdf": "unreferenced bytes",
       },
       references: ["/downloads/approved.pdf"],
     });
+    await writeApprovedTalk(sourceRoot, "long-lived-companies", {
+      assets: {
+        "media/approved.webp": "approved image bytes",
+        "media/unreferenced.webp": "unreferenced image bytes",
+      },
+      references: ["/media/approved.webp"],
+    });
     await writeSourceFile(sourceRoot, "content/talks/draft-talk/manifest.json", "{}");
-    await writeSourceFile(sourceRoot, `content/talks/${excludedDraftSlug}/manifest.json`, "{}");
     await writeSourceFile(sourceRoot, "public/.gitkeep", "\n");
     await writeSourceFile(sourceRoot, "public/downloads/generated.pdf", "generated bytes");
     await writeSourceFile(sourceRoot, "public/media/generated.webp", "generated bytes");
@@ -414,6 +430,8 @@ describe("buildPublicSource", () => {
       "app/page.tsx",
       "content/talks/ai-president-intro/assets/downloads/approved.pdf",
       ...canonicalTalkDocuments.map((document) => `content/talks/ai-president-intro/${document}`),
+      "content/talks/long-lived-companies/assets/media/approved.webp",
+      ...canonicalTalkDocuments.map((document) => `content/talks/long-lived-companies/${document}`),
       "public/.gitkeep",
       "release/public-files.json",
     ].sort(comparePaths));

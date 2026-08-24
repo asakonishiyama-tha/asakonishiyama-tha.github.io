@@ -9,10 +9,10 @@
 - 公開設定: `Public`
 - 公開ブランチ: `main`
 - 正規URL: `https://asakonishiyama-tha.github.io/`
-- 初回公開Talk: `ai-president-intro` だけ
-- 現在: 公開リポジトリは未作成です。GitHub Pages、本番GAS、Sheet、自動返信、Slackも未構成・未接続です。
+- 公開Talk: `ai-president-intro` と `long-lived-companies`
+- 現在: 公開リポジトリ、GitHub Pages、`main`公開、hosted確認まで完了しています（ゲート1〜5は実施済み）。本番GAS、Sheet、自動返信、Slackは未構成・未接続で、ゲート6〜10は未承認のままブロックします。
 
-ローカルの `manifest.json` では静的確認のため `published: true` になっていますが、Talk公開の外部承認はまだありません。この値、ローカルcommit、テスト成功のどれも、pushや公開の許可を意味しません。
+2つのTalkの `manifest.json` は承認済み公開物として `published: true` です。今後のTalk追加では、この値、ローカルcommit、テスト成功のどれも、新しいpushや公開の許可を意味しません。
 
 ## 作業を始める前の確認
 
@@ -34,7 +34,7 @@ npm ci
 npm run dev
 ```
 
-`http://localhost:3000/talks/ai-president-intro/` を開き、本文、3問診断、4結果、handoutへの導線を確認します。本番既定は `NEXT_PUBLIC_GAS_WEB_APP_URL` と `NEXT_PUBLIC_PRIVACY_POLICY_URL` の両方が空で、この組み合わせではフォームが「準備中」となり送信できないのが正しい状態です。片方だけ、または不正な値はfail closedです。確認後は `Ctrl+C` で止めます。
+`http://localhost:3000/talks/ai-president-intro/` と `http://localhost:3000/talks/long-lived-companies/` を開き、本文、3問診断、4結果、handoutへの導線を確認します。本番既定は `NEXT_PUBLIC_GAS_WEB_APP_URL` と `NEXT_PUBLIC_PRIVACY_POLICY_URL` の両方が空で、この組み合わせではフォームが「準備中」となり送信できないのが正しい状態です。片方だけ、または不正な値はfail closedです。確認後は `Ctrl+C` で止めます。
 
 ## 静的プレビュー
 
@@ -46,7 +46,7 @@ npm run verify:static
 npm run preview:static
 ```
 
-`http://127.0.0.1:3000/talks/ai-president-intro/` を開きます。`out/` を手作業で直してはいけません。確認後は `Ctrl+C` で止め、ポート3000にローカルサーバーが残っていないことを確認します。
+`http://127.0.0.1:3000/talks/ai-president-intro/` と `http://127.0.0.1:3000/talks/long-lived-companies/` を開きます。`out/` を手作業で直してはいけません。確認後は `Ctrl+C` で止め、ポート3000にローカルサーバーが残っていないことを確認します。
 
 ## 公開候補を作る
 
@@ -58,7 +58,7 @@ npm run release:prepare -- --output "$tha_candidate_dir"
 npm run release:scan -- "$tha_candidate_dir"
 ```
 
-公開候補に含まれてよいのは、公開用アプリ、`ai-president-intro` の8つのJSON、参照中の2つのPDF、GASソース、テスト、CI/Pages workflow、README、このチェックリスト、lockfile、release検査ツールです。過去履歴、内部計画、下書きTalk、未参照素材、`.env`、秘密情報、生成済み `out/` は入りません。
+公開候補に含まれてよいのは、公開用アプリ、`ai-president-intro` と `long-lived-companies` の各8つのJSON、参照中の8つのPDFと2つのWebP、GASソース、テスト、CI/Pages workflow、README、このチェックリスト、lockfile、release検査ツールです。過去履歴、内部計画、下書きTalk、未参照素材、`.env`、秘密情報、生成済み `out/` は入りません。
 
 この時点ではまだローカルGitを作りません。`git init` より前の公開候補に、元の作業領域からコピーされた `.git` がないこと（不在）を確認します。もしあれば、その候補を使わず中止します。
 
@@ -103,7 +103,7 @@ npm run release:scan -- out
 npm run test:e2e
 ```
 
-公開候補の準備と候補自身の安全検査は、この8ゲートより前に必要です。`npm run build` は2つのPDFを `public/downloads/` へ準備して静的サイトを `out/` へ書き出し、`npm run verify:static` と `npm run release:scan -- out` が静的出力を検査します。`npm run test:e2e` はloopbackのローカルサーバーとfake GASだけを使います。
+公開候補の準備と候補自身の安全検査は、この8ゲートより前に必要です。`npm run build` は8つのPDFと2つのWebPを `public/` へ準備して静的サイトを `out/` へ書き出し、`npm run verify:static` と `npm run release:scan -- out` が静的出力を検査します。`npm run test:e2e` はloopbackのローカルサーバーとfake GASだけを使います。
 
 ## ブラウザQA
 
@@ -115,13 +115,13 @@ npm run test:e2e
 npm run test:e2e
 ```
 
-この自動確認が、3問診断、4結果、handout、モバイルとプロジェクター幅、キーボード操作、reduced motion、2つのPDF、loopback fake GASの保存・timeout、横スクロールを毎回同じ条件で検査します。終了コードが0でない、または1件でも失敗したら、手作業で埋め合わせず中止して開発担当へ相談します。
+この自動確認が、両Talk、3問診断、4結果、handout、モバイルとプロジェクター幅、キーボード操作、reduced motion、8つのPDF、loopback fake GASの保存・timeout、横スクロールを毎回同じ条件で検査します。終了コードが0でない、または1件でも失敗したら、手作業で埋め合わせず中止して開発担当へ相談します。
 
 ### 手作業の画面確認
 
 自動確認の後、ChromeまたはEdgeを使える担当者が次を上から行います。スクリーンショットと結果は公開候補や追跡対象ソースに入れず、承認担当者が指定した非公開の証跡フォルダへ保存します。
 
-1. クリーンルーム候補で `npm run preview:static` を実行し、`http://127.0.0.1:3000/talks/ai-president-intro/` を開きます。
+1. クリーンルーム候補で `npm run preview:static` を実行し、2つのTalk（`/talks/ai-president-intro/` と `/talks/long-lived-companies/`）を開きます。
 2. 開発者ツールを `F12`（または右クリック→検証）で開き、端末ツールバーの `Responsive` を選びます。幅と高さを下表どおり数字で入力し、ズームは100%にします。
 3. 各サイズでTalkを先頭から最後までスクロールし、「会社に、もう一人の社長がいたら。」、`01 / THE TURN`、`02 / KNOWLEDGE LOOP`、`03 / 60 SEC QUEST`、`NEXT / KEEP THE KNOWLEDGE` の5場面を1枚ずつ確認します。
 
@@ -144,7 +144,7 @@ npm run test:e2e
 
 reduced motionは開発者ツールの「More tools → Rendering」でCSS media featureを `prefers-reduced-motion: reduce` にし、再読み込み後に5場面をスクロールします。文字やCTAは表示されたまま、非本質的な移動・拡大アニメーションが止まることを確認します。
 
-`/talks/ai-president-intro/handout/` を開いて4段階が読めることを確認し、`/downloads/ai-philosophy-for-smb.pdf` と `/downloads/tha-ai-management-action-sheet.pdf` を別々に開きます。2つともブラウザ内でPDFとして開き、白紙や破損表示にならないことを確認します。HTTP形式とSHA-256は自動ゲートと下表でも照合します。
+両Talkの `/handout/` を開いて内容が読めることを確認し、下表の8PDFを別々に開きます。すべてブラウザ内でPDFとして開き、白紙や破損表示にならないことを確認します。HTTP形式とSHA-256は自動ゲートと下表でも照合します。
 
 開発者ツールの `Console` を空にして再読み込みし、赤いerrorが0件であることを確認します。次に `Network` を空にして再読み込みし、通常プレビューでは `127.0.0.1:3000` 以外のHTTP(S)通信がないことを確認します。実GAS、Sheet、メール、Slackへは接続しません。
 
@@ -162,6 +162,12 @@ fake GASはloopbackだけで動き、実GAS、Sheet、メール、Slackへ接続
 |---|---|---|---|
 | `ai-philosophy-for-smb.pdf` | `content/talks/ai-president-intro/assets/downloads/ai-philosophy-for-smb.pdf` | `public/downloads/ai-philosophy-for-smb.pdf` | `8fb7825ad1fe2fdd12c48d5d75453b17b59d7b8668f1ba60920f9625aff86850` |
 | `tha-ai-management-action-sheet.pdf` | `content/talks/ai-president-intro/assets/downloads/tha-ai-management-action-sheet.pdf` | `public/downloads/tha-ai-management-action-sheet.pdf` | `1daf899cd4a6fdffbf8439b456f9218a7b62ef6ca43f609a218e4ffad3e1db99` |
+| `long-lived-companies-experiment.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf` | `public/downloads/long-lived-companies-experiment.pdf` | `1f70632d9d5d95292510c0b64b22ddbb9922cf2777125f9df77a41e311293680` |
+| `long-lived-companies-explore.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf` | `public/downloads/long-lived-companies-explore.pdf` | `827e80ef3034f4882a979b10f5b4a9833b1f725a5c31ac065b6717d03db51d20` |
+| `long-lived-companies-handout.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf` | `public/downloads/long-lived-companies-handout.pdf` | `e60dfbd48655e125ab4ec37e398cab66ed3625caca4a8d275b4c28e02cfae214` |
+| `long-lived-companies-integrate.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf` | `public/downloads/long-lived-companies-integrate.pdf` | `07a9f07ad7957e61389d04bece52670317a9adcfe430e9a8997d1151bbf19275` |
+| `long-lived-companies-systemize.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf` | `public/downloads/long-lived-companies-systemize.pdf` | `00909ae94eed37cc2f1921e19798a553337ec50280c2b32898f8d627cd2f19ed` |
+| `long-lived-companies-talk.pdf` | `content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf` | `public/downloads/long-lived-companies-talk.pdf` | `a995f8747bbe8891738501dc8d925ff413b5a9aba8fa9fd30abd5b802c32a3c4` |
 
 bundle内の正本、生成後の `public/downloads/`、静的出力 `out/downloads/` の3か所が同じSHA-256であることを毎回確認します。値が違えば公開を止めます。
 
@@ -183,8 +189,8 @@ git remote -v
 - 8ゲートそれぞれのログ。各ログに、正確なコマンド、開始時刻、終了時刻、所要時間、終了コード、テスト件数などの主要出力を残す
 - 候補自身のsource scanログと、生成した `out/` のscanログ（どちらも検出件数を残す）
 - ブラウザQAの結果とスクリーンショット
-- 2つのPDFについて、bundle、`public/`、`out/`それぞれのSHA-256
-- オーナー、リポジトリ名、Public、`main`、正規URL、初回Talk
+- 8つのPDFについて、bundle、`public/`、`out/`それぞれのSHA-256
+- オーナー、リポジトリ名、Public、`main`、正規URL、公開Talk
 
 ログに秘密情報、個人情報、実GAS URL、Sheet ID、Slack Webhookを含めません。ログやスクリーンショットを公開候補や追跡対象ソースへ入れたり保存したりしないでください。
 
@@ -226,13 +232,13 @@ git remote -v
 - GitHub公式: <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository>
 - GitHub公式: <https://docs.github.com/en/code-security/tutorials/remediate-leaked-secrets/remediating-a-leaked-secret>
 
-現在は公開repo、Pages、実GAS、Sheet、メール、Slackが未構成なので、ホスト済み環境のロールバック動作はまだ検証していません。
+公開repoとPagesは構成済みです。実GAS、Sheet、メール、Slackは未構成なので、それらを含むホスト済みロールバック動作はまだ検証していません。
 
 ## 依存関係セキュリティの公開保留
 
 2026-08-24時点の`npm audit`は3 High / 0 Criticalです。脆弱ノードは `next@15.5.23` → `postcss@8.4.31` と `next@15.5.23` → `sharp@0.34.5` で、直接dev依存の`sharp@0.35.3`やVitest/Vite側の`postcss@8.5.26`とは別です。
 
-提案される修復先は `next@16.3.2` でsemver-major（メジャー）です。自動または無審査でupgradeしません。公開は保留（publication hold / ブロック）とし、securityリスクを受容するか、レビュー済みメジャーupgradeを別作業で完了する必要があります。
+提案される修復先は `next@16.3.2` でsemver-major（メジャー）です。自動または無審査でupgradeしません。2026-08-25に、フォーム無効・静的配信だけの公開について3 High / 0 Criticalの既知リスクを受容して公開しました。依存更新は別作業でレビューし、フォーム有効化時には再評価します。
 
 ## ライセンスの境界
 
@@ -240,7 +246,7 @@ git remote -v
 
 ## 10個の外部承認ゲート
 
-次の10件は、それぞれ別の最終承認です。前の承認から次の承認を推測しません。
+次の10件は今後も再利用する承認テンプレートです。現在地は上の「公開先と現在地」を正とし、それぞれ別の最終承認として前の承認から次を推測しません。
 
 1. [ ] **公開リポジトリ作成**
 2. [ ] **Talk・公開対象ソース・正確な素材/PDF・`published: true`の公開許可**
@@ -261,10 +267,8 @@ commitやローカル検証は、外部操作を一切承認しません。repo�
 
 ## 引き継ぎ時の承認依頼
 
-今回お願いする承認はゲート1の「`asakonishiyama-tha/asakonishiyama-tha.github.io` をPublicで作成する」だけです。ゲート2〜10は未承認のままブロックします。
-
-ゲート1を承認するか判断いただく画面には、公開候補manifest、全ゲート結果、ブラウザQA証跡、PDF SHA-256、オーナー/リポジトリ/visibility/branch/URL、初回Talkを提示します。承認されても行うのはrepo作成だけで、初回push以降は実行しません。
+ゲート1〜5は実施済みです。次に外部接続を行う場合も、ゲート6〜10を個別に承認し、フォームを有効にするゲート7ではGASとプライバシーURLを同時に設定してhosted verifierを通します。
 
 ## 今回確認できないこと
 
-まだ外部構成を作っていないため、ホスト済みGitHub Pagesの表示、実GAS Web App、実Sheet保存、実メール自動返信、実Slack通知は確認していません。これらを「確認済み」と報告しません。
+ホスト済みGitHub Pagesの表示は確認済みです。実GAS Web App、実Sheet保存、実メール自動返信、実Slack通知は確認していません。これらを「確認済み」と報告しません。

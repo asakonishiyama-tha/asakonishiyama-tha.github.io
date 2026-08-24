@@ -10,7 +10,7 @@ const rulesPath = path.resolve(path.dirname(modulePath), "../release/secret-rule
 const secureDirectoryFlags = constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW;
 const secureReadFlags = constants.O_RDONLY | constants.O_NOFOLLOW;
 const maximumRulesFileBytes = 1024 * 1024;
-const maximumApprovedPdfBytes = 64 * 1024 * 1024;
+const maximumApprovedBinaryBytes = 64 * 1024 * 1024;
 const fixedMaximumTextFileBytes = 5 * 1024 * 1024;
 const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
 const binaryExtensions = new Set([
@@ -31,11 +31,20 @@ const expectedExampleEmailDomains = [
 const expectedApprovedPdfPairs = new Set([
   "content/talks/ai-president-intro/assets/downloads/ai-philosophy-for-smb.pdf\0downloads/ai-philosophy-for-smb.pdf",
   "content/talks/ai-president-intro/assets/downloads/tha-ai-management-action-sheet.pdf\0downloads/tha-ai-management-action-sheet.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf\0downloads/long-lived-companies-experiment.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf\0downloads/long-lived-companies-explore.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf\0downloads/long-lived-companies-handout.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf\0downloads/long-lived-companies-integrate.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf\0downloads/long-lived-companies-systemize.pdf",
+  "content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf\0downloads/long-lived-companies-talk.pdf",
+]);
+const expectedApprovedImagePairs = new Set([
+  "content/talks/long-lived-companies/assets/media/long-lived-companies-hero.webp\0media/long-lived-companies-hero.webp",
+  "content/talks/long-lived-companies/assets/media/long-lived-companies-time-assets.webp\0media/long-lived-companies-time-assets.webp",
 ]);
 const expectedRuleIds = new Set([
   "aws-access-key",
   "email-address",
-  "excluded-draft",
   "fake-control-route",
   "fake-control-token",
   "forbidden-admin-route",
@@ -61,7 +70,6 @@ const forbiddenPathSegments = new Map([
   ["live", "forbidden-live-route"],
   ["presenter", "forbidden-presenter-route"],
 ]);
-const excludedDraftPathMarker = ["long", "lived", "companies"].join("-");
 const unsafeReportingPathPrefix = "@unsafe-path-sha256/";
 
 function compareText(left, right) {
@@ -237,9 +245,38 @@ function registerAllowancePath(registry, relativePath) {
   registry.set(key, relativePath);
 }
 
+function validateApprovedBinaries(entries, expectedPairs, extension, label, approvedBinaries) {
+  if (!Array.isArray(entries) || entries.length !== expectedPairs.size) {
+    throw new Error(`Release safety configuration schema is invalid (${label}s).`);
+  }
+  const observedPairs = new Set();
+  for (const entry of entries) {
+    assertExactKeys(entry, ["sourcePath", "outputPath", "sha256"], label);
+    assertPolicyPath(entry.sourcePath, `${label} source path`);
+    assertPolicyPath(entry.outputPath, `${label} output path`);
+    if (!entry.sourcePath.endsWith(extension) || !entry.outputPath.endsWith(extension)
+      || path.posix.basename(entry.sourcePath) !== path.posix.basename(entry.outputPath)
+      || typeof entry.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(entry.sha256)) {
+      throw new Error(`Release safety configuration schema is invalid (${label} entry).`);
+    }
+    const pair = `${entry.sourcePath}\0${entry.outputPath}`;
+    if (!expectedPairs.has(pair) || observedPairs.has(pair)) {
+      throw new Error(`Release safety configuration schema is invalid (${label} scope).`);
+    }
+    observedPairs.add(pair);
+    for (const relativePath of [entry.sourcePath, entry.outputPath]) {
+      const key = relativePath.toLowerCase();
+      if (approvedBinaries.has(key)) {
+        throw new Error("Release safety configuration contains an approved binary path collision.");
+      }
+      approvedBinaries.set(key, { path: relativePath, sha256: entry.sha256 });
+    }
+  }
+}
+
 function validateRulesConfig(rawRules) {
   const parsed = parseStrictJson(rawRules);
-  assertExactKeys(parsed, ["version", "maxTextFileBytes", "exampleEmailDomains", "approvedPdfs", "rules"], "root");
+  assertExactKeys(parsed, ["version", "maxTextFileBytes", "exampleEmailDomains", "approvedPdfs", "approvedImages", "rules"], "root");
   if (parsed.version !== 1 || parsed.maxTextFileBytes !== fixedMaximumTextFileBytes) {
     throw new Error("Release safety configuration schema is invalid (fixed limits).");
   }
@@ -250,31 +287,9 @@ function validateRulesConfig(rawRules) {
     throw new Error("Release safety configuration schema is invalid (example email domains).");
   }
 
-  if (!Array.isArray(parsed.approvedPdfs) || parsed.approvedPdfs.length !== expectedApprovedPdfPairs.size) {
-    throw new Error("Release safety configuration schema is invalid (approved PDFs).");
-  }
-  const approvedPdfs = new Map();
-  const observedPdfPairs = new Set();
-  for (const approvedPdf of parsed.approvedPdfs) {
-    assertExactKeys(approvedPdf, ["sourcePath", "outputPath", "sha256"], "approved PDF");
-    assertPolicyPath(approvedPdf.sourcePath, "approved PDF source path");
-    assertPolicyPath(approvedPdf.outputPath, "approved PDF output path");
-    if (!approvedPdf.sourcePath.endsWith(".pdf") || !approvedPdf.outputPath.endsWith(".pdf")
-      || path.posix.basename(approvedPdf.sourcePath) !== path.posix.basename(approvedPdf.outputPath)
-      || typeof approvedPdf.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(approvedPdf.sha256)) {
-      throw new Error("Release safety configuration schema is invalid (approved PDF entry).");
-    }
-    const pair = `${approvedPdf.sourcePath}\0${approvedPdf.outputPath}`;
-    if (!expectedApprovedPdfPairs.has(pair) || observedPdfPairs.has(pair)) {
-      throw new Error("Release safety configuration schema is invalid (approved PDF scope).");
-    }
-    observedPdfPairs.add(pair);
-    for (const relativePath of [approvedPdf.sourcePath, approvedPdf.outputPath]) {
-      const key = relativePath.toLowerCase();
-      if (approvedPdfs.has(key)) throw new Error("Release safety configuration contains an approved PDF path collision.");
-      approvedPdfs.set(key, { path: relativePath, sha256: approvedPdf.sha256 });
-    }
-  }
+  const approvedBinaries = new Map();
+  validateApprovedBinaries(parsed.approvedPdfs, expectedApprovedPdfPairs, ".pdf", "approved PDF", approvedBinaries);
+  validateApprovedBinaries(parsed.approvedImages, expectedApprovedImagePairs, ".webp", "approved image", approvedBinaries);
 
   if (!Array.isArray(parsed.rules)) {
     throw new Error("Release safety configuration schema is invalid (rule inventory).");
@@ -361,7 +376,7 @@ function validateRulesConfig(rawRules) {
   }
 
   return {
-    approvedPdfs,
+    approvedBinaries,
     exampleEmailDomains: new Set(parsed.exampleEmailDomains),
     maxTextFileBytes: parsed.maxTextFileBytes,
     rules,
@@ -547,7 +562,6 @@ function inspectPortablePath(context, relativePath) {
     const rule = forbiddenPathSegments.get(segment);
     if (rule) ruleIds.add(rule);
   }
-  if (lowerPath.includes(excludedDraftPathMarker)) ruleIds.add("excluded-draft");
   if (lowerPath.includes("_fake-gas-control")) ruleIds.add("fake-control-route");
 
   const mustEncode = hasBackslashAmbiguity
@@ -635,8 +649,8 @@ async function readBoundedText(record, maximumBytes) {
   }
 }
 
-async function hashApprovedPdf(record) {
-  if (record.snapshot.size > BigInt(maximumApprovedPdfBytes)) return null;
+async function hashApprovedBinary(record) {
+  if (record.snapshot.size > BigInt(maximumApprovedBinaryBytes)) return null;
   const { handle, snapshot } = await openVerifiedFile(record);
   try {
     const hash = createHash("sha256");
@@ -706,10 +720,10 @@ async function inspectRegularFile(context, relativePath, reportPath, absolutePat
     context.findings.add(reportPath, "filesystem-hardlink");
     return;
   }
-  const approvedPdf = context.config.approvedPdfs.get(relativePath.toLowerCase());
-  if (approvedPdf && approvedPdf.path === relativePath) {
-    const digest = await hashApprovedPdf(record);
-    if (digest !== approvedPdf.sha256) context.findings.add(reportPath, "approved-binary-mismatch");
+  const approvedBinary = context.config.approvedBinaries.get(relativePath.toLowerCase());
+  if (approvedBinary && approvedBinary.path === relativePath) {
+    const digest = await hashApprovedBinary(record);
+    if (digest !== approvedBinary.sha256) context.findings.add(reportPath, "approved-binary-mismatch");
     return;
   }
   if (binaryExtensions.has(path.posix.extname(relativePath).toLowerCase())) {

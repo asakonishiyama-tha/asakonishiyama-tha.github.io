@@ -77,10 +77,6 @@ function awsAccessKey(): string {
   return ["AK", `IA${"A".repeat(16)}`].join("");
 }
 
-function excludedDraft(): string {
-  return ["long", "lived", "companies"].join("-");
-}
-
 function fakeControlRoute(): string {
   return ["", "_fake-gas-control", "v1"].join("/");
 }
@@ -161,7 +157,6 @@ const contentRuleCases = [
   { rule: "tina-token", value: [["TINA", "TOKEN"].join("_"), "token-value-123456"].join("=") },
   { rule: "sheet-id-assignment", value: [["THA", "SHEET", "ID"].join("_"), "sheet-value-1234"].join("=") },
   { rule: "email-address", value: address("person", "outside.example.biz") },
-  { rule: "excluded-draft", value: excludedDraft() },
   { rule: "forbidden-api-route", value: route("api") },
   { rule: "forbidden-admin-route", value: route("admin") },
   { rule: "forbidden-live-route", value: route("live") },
@@ -215,6 +210,17 @@ describe("release safety content rules", () => {
       address("person", "e2e-company.example"),
       regexEscapedAddress("person", ["example", "com"]),
     ].join("\n"));
+
+    await expect(scanReleaseSafety(root)).resolves.toEqual([]);
+  });
+
+  it("allows the approved long-lived Talk slug in paths and content", async () => {
+    const root = await createTemporaryRoot();
+    await writeFixture(
+      root,
+      "content/talks/long-lived-companies/manifest.json",
+      `${JSON.stringify({ slug: "long-lived-companies", published: true })}\n`,
+    );
 
     await expect(scanReleaseSafety(root)).resolves.toEqual([]);
   });
@@ -418,11 +424,18 @@ describe("release safety filesystem boundary", () => {
   });
 
   it.each([
-    "ai-philosophy-for-smb.pdf",
-    "tha-ai-management-action-sheet.pdf",
-  ])("allows the hash-pinned approved PDF %s only at an exact source path", async (filename) => {
+    "content/talks/ai-president-intro/assets/downloads/ai-philosophy-for-smb.pdf",
+    "content/talks/ai-president-intro/assets/downloads/tha-ai-management-action-sheet.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf",
+    "content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf",
+    "content/talks/long-lived-companies/assets/media/long-lived-companies-hero.webp",
+    "content/talks/long-lived-companies/assets/media/long-lived-companies-time-assets.webp",
+  ])("allows the hash-pinned approved binary only at its exact source path: %s", async (relativePath) => {
     const root = await createTemporaryRoot();
-    const relativePath = `content/talks/ai-president-intro/assets/downloads/${filename}`;
     const source = path.join(process.cwd(), ...relativePath.split("/"));
     const destination = path.join(root, ...relativePath.split("/"));
     await mkdir(path.dirname(destination), { recursive: true });
@@ -431,9 +444,11 @@ describe("release safety filesystem boundary", () => {
     await expect(scanReleaseSafety(root)).resolves.toEqual([]);
   });
 
-  it("rejects changed bytes at an approved PDF path without exposing a digest", async () => {
+  it.each([
+    "downloads/ai-philosophy-for-smb.pdf",
+    "media/long-lived-companies-hero.webp",
+  ])("rejects changed bytes at the approved binary path %s without exposing a digest", async (relativePath) => {
     const root = await createTemporaryRoot();
-    const relativePath = "downloads/ai-philosophy-for-smb.pdf";
     await writeFixture(root, relativePath, Buffer.from("%PDF-1.7\nchanged"));
 
     const findings = await scanReleaseSafety(root);

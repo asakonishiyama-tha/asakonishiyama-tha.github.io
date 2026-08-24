@@ -6,8 +6,6 @@ import nextConfig from "@/next.config";
 import { getTalk, listPublishedTalks } from "@/lib/content/talk-repository";
 import { publishedTalkParams } from "@/lib/content/static-talk-params";
 
-const excludedDraftSlug = ["long", "lived", "companies"].join("-");
-
 describe("static publishing contract", () => {
   it("configures Next.js for a portable static export", () => {
     expect(nextConfig).toMatchObject({
@@ -17,23 +15,29 @@ describe("static publishing contract", () => {
     });
   });
 
-  it("generates route parameters only for the approved Talk", async () => {
+  it("generates route parameters for both approved Talks", async () => {
     await expect(publishedTalkParams()).resolves.toEqual([
       { slug: "ai-president-intro" },
+      { slug: "long-lived-companies" },
     ]);
   });
 
-  it("selects only the approved initial Talk", async () => {
+  it("selects both approved Talks", async () => {
     const talks = await listPublishedTalks();
 
-    expect(talks).toHaveLength(1);
+    expect(talks).toHaveLength(2);
     expect(talks).toMatchObject([
       { slug: "ai-president-intro", published: true },
+      { slug: "long-lived-companies", published: true },
     ]);
   });
 
-  it("keeps the removed long-lived Talk out of the repository", async () => {
-    await expect(getTalk(excludedDraftSlug)).resolves.toBeNull();
+  it("loads the approved long-lived Talk from the repository", async () => {
+    await expect(getTalk("long-lived-companies")).resolves.toMatchObject({
+      slug: "long-lived-companies",
+      published: true,
+      title: "御社らしさは、20年後も残るか。",
+    });
   });
 
   it("maps the package start command to the static-export preview server", async () => {

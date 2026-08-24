@@ -30,7 +30,7 @@ test.afterEach(async ({ page }) => {
   expect(guard?.externalRequests ?? []).toEqual([]);
 });
 
-test("serves the approved home route and links only the published Talk", async ({ page }) => {
+test("serves the approved home route and links both published Talks", async ({ page }) => {
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
@@ -41,8 +41,12 @@ test("serves the approved home route and links only the published Talk", async (
     "href",
     "/talks/ai-president-intro/",
   );
+  await expect(page.getByRole("link", { name: /御社らしさは、20年後も残るか。/ })).toHaveAttribute(
+    "href",
+    "/talks/long-lived-companies/",
+  );
   await expect(page.getByText("新しいTalkは、公開前レビューを経て追加します。")).toBeVisible();
-  await expect(page.getByRole("link")).toHaveCount(1);
+  await expect(page.getByRole("link")).toHaveCount(2);
 });
 
 test("returns the static server 404 for an unknown artifact", async ({ request }) => {

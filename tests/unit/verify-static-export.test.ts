@@ -15,11 +15,26 @@ const approvedRoutes = [
   "/talks/ai-president-intro/quest/",
   "/talks/ai-president-intro/result/",
   "/talks/ai-president-intro/handout/",
+  "/talks/long-lived-companies/",
+  "/talks/long-lived-companies/quest/",
+  "/talks/long-lived-companies/result/",
+  "/talks/long-lived-companies/handout/",
 ];
 
 const approvedPdfs = [
   "/downloads/ai-philosophy-for-smb.pdf",
   "/downloads/tha-ai-management-action-sheet.pdf",
+  "/downloads/long-lived-companies-experiment.pdf",
+  "/downloads/long-lived-companies-explore.pdf",
+  "/downloads/long-lived-companies-handout.pdf",
+  "/downloads/long-lived-companies-integrate.pdf",
+  "/downloads/long-lived-companies-systemize.pdf",
+  "/downloads/long-lived-companies-talk.pdf",
+];
+
+const approvedMedia = [
+  "/media/long-lived-companies-hero.webp",
+  "/media/long-lived-companies-time-assets.webp",
 ];
 
 const frameworkRouteArtifacts = [
@@ -28,8 +43,11 @@ const frameworkRouteArtifacts = [
   "talks/ai-president-intro/quest/index.txt",
   "talks/ai-president-intro/result/index.txt",
   "talks/ai-president-intro/handout/index.txt",
+  "talks/long-lived-companies/index.txt",
+  "talks/long-lived-companies/quest/index.txt",
+  "talks/long-lived-companies/result/index.txt",
+  "talks/long-lived-companies/handout/index.txt",
 ];
-const excludedDraftSlug = ["long", "lived", "companies"].join("-");
 
 let temporaryRoot: string;
 const runningServers: ChildProcess[] = [];
@@ -43,7 +61,8 @@ async function writeArtifact(relativePath: string, contents: string | Buffer) {
 async function createValidExport() {
   const routeLinks = approvedRoutes.map((route) => `<a href="${route}">${route}</a>`).join("");
   const pdfLinks = approvedPdfs.map((pdf) => `<a href="${pdf}">${pdf}</a>`).join("");
-  const shell = `<!doctype html><html><head><link rel="stylesheet" href="/_next/static/css/site.css"></head><body>${routeLinks}${pdfLinks}<script src="/_next/static/chunks/app.js"></script></body></html>`;
+  const mediaLinks = approvedMedia.map((media) => `<img src="${media}" alt="approved">`).join("");
+  const shell = `<!doctype html><html><head><link rel="stylesheet" href="/_next/static/css/site.css"></head><body>${routeLinks}${pdfLinks}${mediaLinks}<script src="/_next/static/chunks/app.js"></script></body></html>`;
 
   for (const route of approvedRoutes) {
     const relativePath = route === "/" ? "index.html" : `${route.slice(1)}index.html`;
@@ -56,6 +75,8 @@ async function createValidExport() {
   await writeArtifact("_next/static/chunks/app.js", "globalThis.__STATIC_EXPORT__ = true;");
   await writeArtifact("downloads/ai-philosophy-for-smb.pdf", "%PDF-1.7\nseminar");
   await writeArtifact("downloads/tha-ai-management-action-sheet.pdf", "%PDF-1.7\naction-sheet");
+  for (const pdf of approvedPdfs.slice(2)) await writeArtifact(pdf.slice(1), "%PDF-1.7\nlong-lived");
+  for (const media of approvedMedia) await writeArtifact(media.slice(1), Buffer.from("RIFF-approved-webp"));
 }
 
 async function startStaticServer(hostname = "127.0.0.1") {
@@ -152,7 +173,7 @@ describe("verifyStaticExport", () => {
       label: relativePath,
       removed: [relativePath],
     })),
-    { label: "all five route payloads", removed: frameworkRouteArtifacts },
+    { label: "all nine route payloads", removed: frameworkRouteArtifacts },
   ])("requires $label in the observed framework route payload set", async ({ removed }) => {
     await createValidExport();
     await Promise.all(removed.map((relativePath) => (
@@ -169,7 +190,6 @@ describe("verifyStaticExport", () => {
     ["admin/index.html", "forbidden-path:admin"],
     ["talks/ai-president-intro/live/index.html", "forbidden-path:live"],
     ["talks/ai-president-intro/presenter/index.html", "forbidden-path:presenter"],
-    [`talks/${excludedDraftSlug}/index.html`, "forbidden-path:long-lived"],
     ["talks/draft-talk/index.html", "approved-route-set"],
   ])("rejects the forbidden artifact %s", async (relativePath, rule) => {
     await createValidExport();

@@ -1,0 +1,168 @@
+{
+  "slug": "long-lived-companies",
+  "presentation": {
+    "heroKicker": "THA / TIME ASSETS",
+    "scrollPrompt": "SCROLL THROUGH 1450 YEARS",
+    "resultEyebrow": "YOUR TIME-ASSET STAGE",
+    "nextActionLabel": "FIRST STEP"
+  },
+  "scenes": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "heading": "御社らしさは、20年後も残るか。",
+      "supportingText": "日本の老舗企業が教える、AI時代の「時間資産」の残し方",
+      "image": "/media/long-lived-companies-hero.webp",
+      "alt": "時間を重ねた企業の知恵を、年輪と青い光で表現したコンセプト画像",
+      "atmosphere": "timeMesh",
+      "sourceNote": "AI生成によるコンセプト画像（実在企業の写真ではありません）",
+      "evidenceRefs": []
+    },
+    {
+      "id": "opening-question",
+      "type": "statement",
+      "statement": "社長がいなくても、御社らしい判断は残りますか。",
+      "evidenceRefs": []
+    },
+    {
+      "id": "three-facts",
+      "type": "cards",
+      "heading": "約1,450年 / 45,284社 / 41.3%",
+      "cards": [
+        {
+          "title": "約1,450年",
+          "description": "日本最古の会社とされる金剛組。飛鳥時代の創業とされ、現在も宮大工の仕事を続ける。"
+        },
+        {
+          "title": "45,284社",
+          "description": "創業100年を超える日本企業。帝国データバンク「全国『老舗企業』分析調査（2024年）」。"
+        },
+        {
+          "title": "41.3%",
+          "description": "世界の100年企業に占める日本企業の割合。日経BPコンサルティング「周年事業ラボ」（2020年発表）。"
+        }
+      ],
+      "evidenceRefs": [
+        "fact-kongo-gumi-1450",
+        "fact-jp-centenarian-45284",
+        "fact-world-share-413"
+      ]
+    },
+    {
+      "id": "not-accidental",
+      "type": "statement",
+      "statement": "日本が会社の寿命で「断トツ世界一」なのは、偶然ではない。",
+      "evidenceRefs": ["fact-world-share-413", "synthesis-five-soils"]
+    },
+    {
+      "id": "five-soils",
+      "type": "cards",
+      "heading": "日本だけに重なった、5つの土壌。",
+      "cards": [
+        { "title": "地理", "description": "逃げられない島国と定住社会が、信用を資本に変えた。" },
+        { "title": "平和", "description": "江戸260年の無戦争が、百年先へ投資できる時間を生んだ。" },
+        { "title": "教育", "description": "寺子屋と読み書き算盤が、信用と判断基準を文書に残した。" },
+        { "title": "思想", "description": "儒学と石門心学が、利益と道徳を両立する商人の誇りを育てた。" },
+        { "title": "家", "description": "血縁ではなく事業体を継ぐ仕組みが、最もふさわしい人へ会社を渡した。" }
+      ],
+      "sourceNote": "THA SYNTHESIS / 元資料・参考文献をもとにTHAが5つの土壌として整理・解釈。",
+      "evidenceRefs": ["synthesis-five-soils"]
+    },
+    {
+      "id": "time-assets-photo",
+      "type": "photoStory",
+      "image": "/media/long-lived-companies-time-assets.webp",
+      "alt": "古い帳面と職人の手元に青い光が重なり、紙の記録からAIへ知恵が受け継がれるイメージ",
+      "caption": "信用も、技も、判断の軸も、時間でしか積み上がらない。",
+      "sourceNote": "AI生成によるコンセプトイメージ。実在企業の実景ではありません。",
+      "evidenceRefs": ["synthesis-five-soils"]
+    },
+    {
+      "id": "change-to-protect",
+      "type": "statement",
+      "statement": "老舗は、変わらなかった会社ではない。守るために、変え続けた会社だ。",
+      "evidenceRefs": ["case-toushirou", "case-ohga", "case-kikkoman"]
+    },
+    {
+      "id": "case-toushirou",
+      "type": "caseStudy",
+      "organization": "豆子郎",
+      "heading": "初心を守るため、成長中に全国販路を撤退した。",
+      "challenge": "高度成長期、売上が伸びるほど味と初心が薄まる危機があった。",
+      "approach": "「人々を喜ばせたい」という創業の初心を守り、成長中に全国販路から撤退した。",
+      "outcome": "注文一つひとつの物語を聞く姿勢が残り、理念を教えたAI「まめこ社長」へ受け継がれた。",
+      "sourceNote": "取材に基づく事例 / THAによる取材・書籍原稿（実名掲載・エピソードは同社了解済み）。",
+      "evidenceRefs": ["case-toushirou"]
+    },
+    {
+      "id": "case-ohga",
+      "type": "caseStudy",
+      "organization": "大賀薬局",
+      "heading": "奉仕の心を守るため、規模ではなく地域の信頼を選んだ。",
+      "challenge": "全国チェーンとの規模競争で売上が落ち、薬剤師の離職も続いた。",
+      "approach": "「奉仕の心」を守るものと定め、地域と社員への奉仕を軸に組織を立て直した。",
+      "outcome": "守るものが決まったことで、社長自ら地域のヒーローに挑むほど大胆に変われる会社になった。",
+      "sourceNote": "取材に基づく事例 / THAによる取材・書籍原稿（実名掲載・エピソードは同社了解済み）。",
+      "evidenceRefs": ["case-ohga"]
+    },
+    {
+      "id": "case-kikkoman",
+      "type": "caseStudy",
+      "organization": "キッコーマン",
+      "heading": "理念とビジョンを守り、しょうゆを世界の日常へ翻訳した。",
+      "challenge": "戦後の海外進出は、短期の最適解では説明できない決断だった。",
+      "approach": "「しょうゆをグローバル・スタンダードの調味料にする」というビジョンを掲げ、各地の日常食へ長く翻訳した。",
+      "outcome": "理念と諦めない姿勢が判断軸となり、360年以上続く企業が世界市場を拓いた。",
+      "sourceNote": "公式情報に基づく事例 / キッコーマン公式沿革・決算資料。講演内容は社内聴講メモ。",
+      "evidenceRefs": ["case-kikkoman"]
+    },
+    {
+      "id": "evaporation-crisis",
+      "type": "statement",
+      "statement": "ただし、この宝は、放っておくと蒸発します。",
+      "tone": "crisis",
+      "evidenceRefs": ["viewpoint-ai-average-risk"]
+    },
+    {
+      "id": "two-risks",
+      "type": "cards",
+      "heading": "承継の時間切れ / 世界の平均への置き換え",
+      "cards": [
+        { "title": "承継の時間切れ", "description": "人の中だけにある知恵は、引退とともに失われる。" },
+        { "title": "世界の平均への置き換え", "description": "同じAIの平均的な答えが、御社固有の判断を覆っていく。" }
+      ],
+      "sourceNote": "THA VIEWPOINT / 「同じAIの平均的な答えが御社固有の判断を覆う」はTHAの解釈・主張です。",
+      "evidenceRefs": ["viewpoint-ai-average-risk"]
+    },
+    {
+      "id": "company-is-people",
+      "type": "statement",
+      "statement": "「会社らしさ」の問いは、そのまま人間の問いです。",
+      "emphasizedText": "THE AMBITION",
+      "evidenceRefs": []
+    },
+    {
+      "id": "quest",
+      "type": "questCta",
+      "heading": "3問、60秒。御社の「時間資産」の現在地がわかる。",
+      "description": "会社名や氏名を入力せずに、既にある強みと最初の一歩を確認できます。",
+      "buttonLabel": "60秒診断を始める",
+      "evidenceRefs": []
+    },
+    {
+      "id": "twenty-years-later",
+      "type": "statement",
+      "statement": "20年後、子どもに誇れる仕事を残す。その一歩目が、明日の判断です。",
+      "evidenceRefs": []
+    },
+    {
+      "id": "lead",
+      "type": "leadCta",
+      "heading": "今日の気づきを、次の世代へ渡せる形にする。",
+      "description": "診断結果に合った御社らしさ継承シートと登壇資料を持ち帰れます。",
+      "downloadLabel": "御社らしさ継承シートを受け取る",
+      "consultationLabel": "会社らしさの継承を相談する",
+      "evidenceRefs": []
+    }
+  ]
+}

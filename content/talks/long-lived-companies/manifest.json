@@ -1,0 +1,111 @@
+{
+  "formatVersion": 2,
+  "slug": "long-lived-companies",
+  "title": "御社らしさは、20年後も残るか。",
+  "speaker": "西山朝子",
+  "eventName": "THA 老舗企業と時間資産 登壇セッション",
+  "published": true,
+  "sourceLinks": [
+    {
+      "label": "登壇・スポットセミナー関連（Notion）",
+      "url": "https://app.notion.com/p/1245c360c55d80698531fb0da98d282c",
+      "kind": "notion"
+    },
+    {
+      "label": "西山朝子講演台本（Notion）",
+      "url": "https://app.notion.com/p/30e5c360c55d80549b00dfac3fc2fca2",
+      "kind": "notion"
+    },
+    {
+      "label": "2026-08-18 老舗企業勉強会レポート（Notion）",
+      "url": "https://app.notion.com/p/3c05c360c55d800bbcacd83b58de5128",
+      "kind": "research"
+    }
+  ],
+  "questions": [
+    {
+      "id": "language",
+      "prompt": "御社らしさを、社員は具体的な出来事と一緒に語れますか。",
+      "options": [
+        { "label": "社長や一部の人だけが語れる", "score": 0 },
+        { "label": "理念や社是の文章はある", "score": 1 },
+        { "label": "一部の社員が具体例と一緒に語れる", "score": 2 },
+        { "label": "世代や部署を越えて、自分の言葉と実例で語れる", "score": 3 }
+      ]
+    },
+    {
+      "id": "decision-assets",
+      "prompt": "御社らしい判断の理由は、会社に残っていますか。",
+      "options": [
+        { "label": "個人の経験や記憶に依存している", "score": 0 },
+        { "label": "規程や手順書として残っている", "score": 1 },
+        { "label": "成功・失敗事例と採否理由が共有されている", "score": 2 },
+        { "label": "日々の判断と振り返りから継続的に更新されている", "score": 3 }
+      ]
+    },
+    {
+      "id": "succession",
+      "prompt": "次の世代やAIが、御社らしい判断を再現できる状態ですか。",
+      "options": [
+        { "label": "特定の人がいないと判断できない", "score": 0 },
+        { "label": "引き継ぎ資料や研修に頼っている", "score": 1 },
+        { "label": "若手が過去事例を参照し、自分で判断できる", "score": 2 },
+        { "label": "人とAIが判断資産を参照し、次の学びを会社へ残せる", "score": 3 }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "stage": "explore",
+      "title": "原石発掘期",
+      "rpgSubtitle": "会社らしさを見つける段階",
+      "description": "会社らしさは日々の仕事に存在するが、まだ個人の中にある",
+      "nextQuest": "最近「うちらしい」と感じた出来事を一つ、経営者と社員で言葉にする"
+    },
+    {
+      "stage": "experiment",
+      "title": "言語化期",
+      "rpgSubtitle": "判断と言葉を結ぶ段階",
+      "description": "理念や言葉はあるが、具体的な判断や出来事との接続が弱い",
+      "nextQuest": "理念を体現した成功・失敗事例を一つ記録し、判断理由を添える"
+    },
+    {
+      "stage": "systemize",
+      "title": "浸透期",
+      "rpgSubtitle": "言葉を日々の仕事へ広げる段階",
+      "description": "会社らしさは共有されているが、世代を越えて更新する仕組みが弱い",
+      "nextQuest": "月1回、判断事例を持ち寄り、言葉と実例を更新する場をつくる"
+    },
+    {
+      "stage": "integrate",
+      "title": "継承資産期",
+      "rpgSubtitle": "次の世代へ手渡せる段階",
+      "description": "言葉・事例・判断基準が、次の世代とAIへ手渡せる状態にある",
+      "nextQuest": "重要判断を一つ選び、人とAIが参照・改善できる資産として残す"
+    }
+  ],
+  "lead": {
+    "downloadEnabled": true,
+    "stageDownloads": [
+      { "stage": "explore", "url": "/downloads/long-lived-companies-explore.pdf" },
+      { "stage": "experiment", "url": "/downloads/long-lived-companies-experiment.pdf" },
+      { "stage": "systemize", "url": "/downloads/long-lived-companies-systemize.pdf" },
+      { "stage": "integrate", "url": "/downloads/long-lived-companies-integrate.pdf" }
+    ],
+    "additionalDownloads": [
+      { "label": "読み物型配布資料をダウンロード", "url": "/downloads/long-lived-companies-handout.pdf" },
+      { "label": "登壇資料をダウンロード", "url": "/downloads/long-lived-companies-talk.pdf" }
+    ],
+    "formHeading": "御社らしさ継承シートを受け取る",
+    "consentText": "入力いただいた情報は、資料送付またはご相談への対応にのみ使用します。",
+    "thankYouMessage": "お申し込みを受け付けました。診断結果に合った継承シートをご利用ください。",
+    "consultationCta": "会社らしさの継承を相談する",
+    "consultationHeading": "会社らしさと時間資産の継承を相談する",
+    "consultationTopics": [
+      { "value": "succession", "label": "次世代への事業承継について相談したい" },
+      { "value": "time-assets", "label": "会社らしさ・判断資産の言語化について相談したい" },
+      { "value": "other", "label": "その他" }
+    ],
+    "consultationThankYouMessage": "ご相談を受け付けました。会社らしさと時間資産の継承について、担当者よりご連絡します。"
+  }
+}

@@ -47,7 +47,7 @@ const supportedExceptionalFiles = new Set([
   "tsconfig.json",
   "vitest.config.ts",
 ]);
-const canonicalTalkSlug = "ai-president-intro";
+const approvedTalkSlugs = ["ai-president-intro", "long-lived-companies"];
 const canonicalTalkDocuments = [
   "evidence.json",
   "handout.json",
@@ -494,34 +494,36 @@ function collectAssetReferences(document) {
 }
 
 async function collectApprovedContentPaths(context) {
-  const bundlePrefix = `content/talks/${canonicalTalkSlug}`;
   const allowedPaths = new Set();
-  const documents = [];
-  for (const document of canonicalTalkDocuments) {
-    const relativePath = `${bundlePrefix}/${document}`;
-    const record = await inspectFile(context, relativePath);
-    const bytes = await readVerifiedFile(context, record);
-    let parsed;
-    try {
-      parsed = JSON.parse(bytes.toString("utf8"));
-    } catch (error) {
-      throw new Error(`approved Talk document must contain valid JSON: ${relativePath}`, { cause: error });
+  for (const approvedTalkSlug of approvedTalkSlugs) {
+    const bundlePrefix = `content/talks/${approvedTalkSlug}`;
+    const documents = [];
+    for (const document of canonicalTalkDocuments) {
+      const relativePath = `${bundlePrefix}/${document}`;
+      const record = await inspectFile(context, relativePath);
+      const bytes = await readVerifiedFile(context, record);
+      let parsed;
+      try {
+        parsed = JSON.parse(bytes.toString("utf8"));
+      } catch (error) {
+        throw new Error(`approved Talk document must contain valid JSON: ${relativePath}`, { cause: error });
+      }
+      documents.push({ document, parsed });
+      allowedPaths.add(relativePath);
     }
-    documents.push({ document, parsed });
-    allowedPaths.add(relativePath);
-  }
-  const manifest = documents.find(({ document }) => document === "manifest.json")?.parsed;
-  if (manifest === null || typeof manifest !== "object" || Array.isArray(manifest)
-    || manifest.slug !== canonicalTalkSlug || manifest.published !== true) {
-    throw new Error(`approved Talk manifest must declare slug ${canonicalTalkSlug} with published true`);
-  }
+    const manifest = documents.find(({ document }) => document === "manifest.json")?.parsed;
+    if (manifest === null || typeof manifest !== "object" || Array.isArray(manifest)
+      || manifest.slug !== approvedTalkSlug || manifest.published !== true) {
+      throw new Error(`approved Talk manifest must declare slug ${approvedTalkSlug} with published true`);
+    }
 
-  const references = new Set();
-  for (const { parsed } of documents) {
-    for (const reference of collectAssetReferences(parsed)) references.add(reference);
-  }
-  for (const reference of [...references].sort(comparePaths)) {
-    allowedPaths.add(`${bundlePrefix}/assets/${reference}`);
+    const references = new Set();
+    for (const { parsed } of documents) {
+      for (const reference of collectAssetReferences(parsed)) references.add(reference);
+    }
+    for (const reference of [...references].sort(comparePaths)) {
+      allowedPaths.add(`${bundlePrefix}/assets/${reference}`);
+    }
   }
   return allowedPaths;
 }
@@ -545,7 +547,6 @@ function isForbiddenPath(relativePath) {
   ))) return true;
   if (basename.startsWith(".env") && relativePath !== ".env.example") return true;
   if (basename.endsWith(".tsbuildinfo")) return true;
-  if (relativePath.toLowerCase().includes("long-lived-companies")) return true;
   if (relativePath === "app/api" || relativePath.startsWith("app/api/")) return true;
   return /(^|[/_.-])(live|presenter)([/_.-]|$)/i.test(relativePath);
 }

@@ -8,11 +8,21 @@ const approvedRoutes = [
   "/talks/ai-president-intro/quest/",
   "/talks/ai-president-intro/result/",
   "/talks/ai-president-intro/handout/",
+  "/talks/long-lived-companies/",
+  "/talks/long-lived-companies/quest/",
+  "/talks/long-lived-companies/result/",
+  "/talks/long-lived-companies/handout/",
 ];
 
 const approvedPdfs = [
   "/downloads/ai-philosophy-for-smb.pdf",
   "/downloads/tha-ai-management-action-sheet.pdf",
+  "/downloads/long-lived-companies-experiment.pdf",
+  "/downloads/long-lived-companies-explore.pdf",
+  "/downloads/long-lived-companies-handout.pdf",
+  "/downloads/long-lived-companies-integrate.pdf",
+  "/downloads/long-lived-companies-systemize.pdf",
+  "/downloads/long-lived-companies-talk.pdf",
 ];
 
 const approvedHtmlArtifacts = new Set([
@@ -21,6 +31,10 @@ const approvedHtmlArtifacts = new Set([
   "talks/ai-president-intro/quest/index.html",
   "talks/ai-president-intro/result/index.html",
   "talks/ai-president-intro/handout/index.html",
+  "talks/long-lived-companies/index.html",
+  "talks/long-lived-companies/quest/index.html",
+  "talks/long-lived-companies/result/index.html",
+  "talks/long-lived-companies/handout/index.html",
 ]);
 const requiredFrameworkRouteArtifacts = [
   "index.txt",
@@ -28,10 +42,17 @@ const requiredFrameworkRouteArtifacts = [
   "talks/ai-president-intro/quest/index.txt",
   "talks/ai-president-intro/result/index.txt",
   "talks/ai-president-intro/handout/index.txt",
+  "talks/long-lived-companies/index.txt",
+  "talks/long-lived-companies/quest/index.txt",
+  "talks/long-lived-companies/result/index.txt",
+  "talks/long-lived-companies/handout/index.txt",
 ];
 const approvedFrameworkRouteArtifacts = new Set(requiredFrameworkRouteArtifacts);
 const approvedPdfArtifacts = new Set(approvedPdfs.map((pdf) => pdf.slice(1)));
-const approvedMediaArtifacts = new Set([]);
+const approvedMediaArtifacts = new Set([
+  "media/long-lived-companies-hero.webp",
+  "media/long-lived-companies-time-assets.webp",
+]);
 const exactInfrastructureArtifacts = new Set([".gitkeep"]);
 
 const requiredFrameworkErrorDocuments = [];
@@ -89,10 +110,6 @@ async function collectArtifacts(rootDirectory) {
         const browserName = segment.endsWith(".html") ? segment.slice(0, -".html".length) : segment;
         if (forbiddenSegments.has(browserName)) findings.push(`forbidden-path:${browserName}: ${relativePath}`);
       }
-      if (relativePath.toLowerCase().includes("long-lived")) {
-        findings.push(`forbidden-path:long-lived: ${relativePath}`);
-      }
-
       if (status.isSymbolicLink()) {
         findings.push(`symlink: ${relativePath}`);
         continue;

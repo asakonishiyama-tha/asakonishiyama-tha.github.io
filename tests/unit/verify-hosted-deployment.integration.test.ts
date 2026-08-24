@@ -21,6 +21,12 @@ const pdfs = {
     import.meta.dirname,
     "../../content/talks/ai-president-intro/assets/downloads/tha-ai-management-action-sheet.pdf",
   )),
+  "/site/downloads/long-lived-companies-experiment.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-experiment.pdf")),
+  "/site/downloads/long-lived-companies-explore.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-explore.pdf")),
+  "/site/downloads/long-lived-companies-handout.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-handout.pdf")),
+  "/site/downloads/long-lived-companies-integrate.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-integrate.pdf")),
+  "/site/downloads/long-lived-companies-systemize.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-systemize.pdf")),
+  "/site/downloads/long-lived-companies-talk.pdf": await readFile(path.resolve(import.meta.dirname, "../../content/talks/long-lived-companies/assets/downloads/long-lived-companies-talk.pdf")),
 } as const;
 
 let server: Server | undefined;
@@ -42,6 +48,10 @@ async function startFixture(mode: "success" | "bad-pdf" | "exposed-admin") {
     "/site/talks/ai-president-intro/quest/",
     "/site/talks/ai-president-intro/result/",
     "/site/talks/ai-president-intro/handout/",
+    "/site/talks/long-lived-companies/",
+    "/site/talks/long-lived-companies/quest/",
+    "/site/talks/long-lived-companies/result/",
+    "/site/talks/long-lived-companies/handout/",
   ]);
   server = createServer((request, response) => {
     const pathname = new URL(request.url ?? "/", "http://fixture.invalid").pathname;
@@ -83,11 +93,11 @@ describe("hosted verifier local HTTP integration fixture", () => {
       gasWebAppUrl: "",
       privacyPolicyUrl: "",
     })).resolves.toEqual({
-      canonicalRoutes: 5,
-      forbiddenRoutes: 8,
-      pdfs: 2,
+      canonicalRoutes: 9,
+      forbiddenRoutes: 7,
+      pdfs: 8,
       privacy: "skipped",
-      requests: 15,
+      requests: 24,
     });
   });
 
