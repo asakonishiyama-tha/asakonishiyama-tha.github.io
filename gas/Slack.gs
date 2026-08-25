@@ -1,4 +1,7 @@
-var THA_SLACK_TALK_LABEL_ = "会社に、もう一人の社長がいたら。";
+var THA_SLACK_TALK_LABELS_ = Object.freeze({
+  "ai-president-intro": "会社に、もう一人の社長がいたら。",
+  "long-lived-companies": "御社らしさは、20年後も残るか。",
+});
 var THA_SLACK_STAGE_LABELS_ = Object.freeze({
   explore: "探索期",
   experiment: "実験期",
@@ -128,7 +131,7 @@ function formatSlackMessage_(row, sheetUrl) {
     "種別：" + (row[2] === "download" ? "資料請求" : "相談申込"),
     "会社名：" + sanitizeSlackApplicantText_(row[5]),
     "氏名：" + (row[6].length === 0 ? "未入力" : sanitizeSlackApplicantText_(row[6])) + "様",
-    "対象Talk：" + THA_SLACK_TALK_LABEL_,
+    "対象Talk：" + THA_SLACK_TALK_LABELS_[row[3]],
     "診断結果：" + (row[10].length === 0 ? "未診断" : THA_SLACK_STAGE_LABELS_[row[10]]),
   ];
   if (row[2] === "consultation") {
@@ -152,8 +155,9 @@ function isSlackMessageRow_(row) {
       || !isIsoDateTime_(row[0])
       || !isUuid_(row[1])
       || (row[2] !== "download" && row[2] !== "consultation")
-      || row[3] !== THA_ALLOWED_TALK_SLUG_
-      || row[4] !== THA_CANONICAL_EVENT_NAME_
+      || !hasOwn_(THA_TALK_EVENTS_, row[3])
+      || !hasOwn_(THA_SLACK_TALK_LABELS_, row[3])
+      || row[4] !== THA_TALK_EVENTS_[row[3]]
       || typeof row[5] !== "string"
       || row[5].length === 0
       || typeof row[6] !== "string"

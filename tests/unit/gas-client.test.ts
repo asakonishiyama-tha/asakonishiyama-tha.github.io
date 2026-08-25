@@ -17,6 +17,7 @@ const validLead = {
   intent: "consultation" as const,
   companyName: "THA株式会社",
   name: "西山朝子",
+  phone: "",
   email: "asako@example.com",
   consent: true as const,
   talkSlug: "ai-president-intro",

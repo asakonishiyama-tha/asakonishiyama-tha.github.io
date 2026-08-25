@@ -15,5 +15,8 @@ describe("ai-president-intro Talk content", () => {
       "explore", "experiment", "systemize", "integrate",
     ]);
     expect(bundle?.handout.chapters.length).toBeGreaterThan(0);
+    expect(bundle?.manifest.lead.consentText).toBe(
+      "入力いただいた情報は、資料提供、ご相談への対応、THAの関連サービス・セミナーのご案内、メールまたは任意入力された電話番号によるご連絡に利用します。",
+    );
   });
 });

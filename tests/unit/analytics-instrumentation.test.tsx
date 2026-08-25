@@ -68,7 +68,7 @@ function installDataLayer() {
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("会社名"), "THA株式会社");
-  await user.type(screen.getByLabelText("お名前（任意）"), "西山朝子");
+  await user.type(screen.getByLabelText("お名前"), "西山朝子");
   await user.type(screen.getByLabelText("メールアドレス"), "asako@example.com");
   await user.click(screen.getByLabelText(/個人情報の取り扱いに同意する/));
 }

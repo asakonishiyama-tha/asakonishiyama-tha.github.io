@@ -34,12 +34,13 @@ function saveLeadSubmission_(submission) {
       "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     );
     var lead = submission.lead;
+    var deleteAfter = formatDeleteAfter_(now);
     var row = [
       receivedAt,
       submission.submissionId,
       lead.intent,
-      THA_ALLOWED_TALK_SLUG_,
-      THA_CANONICAL_EVENT_NAME_,
+      lead.talkSlug,
+      lead.eventName,
       lead.companyName,
       lead.name,
       lead.email,
@@ -54,6 +55,8 @@ function saveLeadSubmission_(submission) {
       "pending",
       "",
       0,
+      spreadsheetSafePhone_(lead.phone),
+      deleteAfter,
     ];
     sheet.appendRow(row);
     return Object.freeze({
@@ -69,6 +72,20 @@ function saveLeadSubmission_(submission) {
       }
     }
   }
+}
+
+function spreadsheetSafePhone_(phone) {
+  return phone.charAt(0) === "+" ? "'" + phone : phone;
+}
+
+function formatDeleteAfter_(receivedAt) {
+  var deleteAfter = new Date(receivedAt.getTime());
+  var originalMonth = deleteAfter.getUTCMonth();
+  deleteAfter.setUTCFullYear(deleteAfter.getUTCFullYear() + 1);
+  if (deleteAfter.getUTCMonth() !== originalMonth) {
+    deleteAfter.setUTCDate(0);
+  }
+  return formatUtcIso_(deleteAfter);
 }
 
 function listSlackRetryRows_() {

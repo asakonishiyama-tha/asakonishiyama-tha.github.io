@@ -19,6 +19,7 @@ const FIFTH_SUBMISSION_ID = "aa4cfa52-d47f-46ae-b1a1-a0d3d49e5678";
 const RECEIVED_AT = "2026-08-24T03:04:05.678Z";
 const CONSENTED_AT = "2026-08-23T00:00:00.000Z";
 const CANONICAL_EVENT_NAME = "THA AI社長 登壇セッション";
+const LONG_LIVED_EVENT_NAME = "THA 老舗企業と時間資産 登壇セッション";
 const GENERATED_CALLBACK = "__thaGasReceipt_2f8a1f6b_7a1e_4ed8_9b4c_8a5d345d9c21_1";
 const FORMULA_PREFIXES = ["=", "+", "-", "@"] as const;
 const EXCLUDED_DRAFT_SLUG = ["long", "lived", "companies"].join("-");
@@ -52,8 +53,9 @@ function downloadSubmission(
     lead: {
       intent: "download",
       companyName: "THA株式会社",
-      name: "",
+      name: "西山 朝子",
       email: "person@example.com",
+      phone: "",
       consent: true,
       talkSlug: "ai-president-intro",
       eventName: CANONICAL_EVENT_NAME,
@@ -140,6 +142,8 @@ function storedRow(overrides: Partial<Record<(typeof GAS_HEADERS)[number], unkno
     slackStatus: "pending",
     slackNotifiedAt: "",
     slackRetryCount: 0,
+    phone: "",
+    deleteAfter: "2027-08-24T03:04:05.678Z",
     ...overrides,
   };
   return GAS_HEADERS.map((header) => values[header]);
@@ -150,12 +154,13 @@ function expectNoSavedRow(runtime: Runtime) {
 }
 
 describe("GAS lead storage", () => {
-  it("initializes the exact header and maps a normalized download submission to all 19 columns", () => {
+  it("initializes the exact header and maps a normalized download submission to all 21 columns", () => {
     const runtime = createGasRuntime();
     const payload = downloadSubmission({
       companyName: "  THA株式会社  ",
       name: "  西山 朝子  ",
       email: "  PERSON@EXAMPLE.COM  ",
+      phone: "  +81 (3) 1234-5678  ",
       eventName: `  ${CANONICAL_EVENT_NAME}  `,
       referrer: "  https://example.com/source  ",
       utmSource: "  newsletter  ",
@@ -168,17 +173,57 @@ describe("GAS lead storage", () => {
         "receivedAt", "submissionId", "intent", "talkSlug", "eventName", "company", "name", "email",
         "consultationTopic", "consultationMessage", "resultStage", "referrer", "utmSource", "utmMedium",
         "utmCampaign", "consentedAt", "slackStatus", "slackNotifiedAt", "slackRetryCount",
+        "phone", "deleteAfter",
       ],
       [
         RECEIVED_AT, SUBMISSION_ID, "download", "ai-president-intro", CANONICAL_EVENT_NAME, "THA株式会社",
         "西山 朝子", "person@example.com", "", "", "experiment", "https://example.com/source", "newsletter",
         "email", "launch", CONSENTED_AT, "pending", "", 0,
+        "'+81 (3) 1234-5678", "2027-08-24T03:04:05.678Z",
       ],
     ]);
     expect(runtime.state.headerWrites).toBe(1);
     expect(runtime.state.openedSheetIds).toEqual(["test-sheet-id"]);
     expect(runtime.state.requestedSheetNames).toEqual(["Leads"]);
     expect(receipt(runtime)).toEqual({ submissionId: SUBMISSION_ID, status: "saved" });
+  });
+
+  it("accepts both canonical Talk/event pairs and rejects a cross-Talk forged event", () => {
+    const accepted = createGasRuntime();
+    expectGenericPostOutput(post(accepted, downloadSubmission({
+      talkSlug: "long-lived-companies",
+      eventName: LONG_LIVED_EVENT_NAME,
+    })));
+    expect(accepted.state.rows[1]?.[3]).toBe("long-lived-companies");
+    expect(accepted.state.rows[1]?.[4]).toBe(LONG_LIVED_EVENT_NAME);
+
+    const forged = createGasRuntime();
+    expectGenericPostOutput(post(forged, downloadSubmission({
+      talkSlug: "long-lived-companies",
+      eventName: CANONICAL_EVENT_NAME,
+    })));
+    expectNoSavedRow(forged);
+  });
+
+  it("requires a name and validates the optional phone at the GAS boundary", () => {
+    for (const invalidLead of [
+      { name: "" },
+      { phone: "03-ABCD-5678" },
+      { phone: "123456" },
+      { phone: "=03-1234-5678" },
+    ]) {
+      const runtime = createGasRuntime();
+      post(runtime, downloadSubmission(invalidLead));
+      expectNoSavedRow(runtime);
+    }
+  });
+
+  it("clamps a leap-day one-year deletion deadline to February 28", () => {
+    const runtime = createGasRuntime({ now: "2028-02-29T12:34:56.789Z" });
+
+    post(runtime, downloadSubmission());
+
+    expect(runtime.state.rows[1]?.[20]).toBe("2029-02-28T12:34:56.789Z");
   });
 
   it.each([
@@ -220,11 +265,10 @@ describe("GAS lead storage", () => {
     expect(runtime.state.rows[1]?.[10]).toBe("");
   });
 
-  it("defaults omitted optional name and acquisition fields exactly as the TypeScript schema does", () => {
+  it("defaults omitted acquisition fields exactly as the TypeScript schema does", () => {
     const runtime = createGasRuntime();
     const payload = downloadSubmission();
     const lead = payload.lead as Record<string, unknown>;
-    delete lead.name;
     delete lead.referrer;
     delete lead.utmSource;
     delete lead.utmMedium;
@@ -232,7 +276,7 @@ describe("GAS lead storage", () => {
 
     post(runtime, payload);
 
-    expect(runtime.state.rows[1]?.slice(6, 7)).toEqual([""]);
+    expect(runtime.state.rows[1]?.slice(6, 7)).toEqual(["西山 朝子"]);
     expect(runtime.state.rows[1]?.slice(11, 15)).toEqual(["", "", "", ""]);
   });
 });

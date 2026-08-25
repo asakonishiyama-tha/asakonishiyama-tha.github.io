@@ -97,7 +97,7 @@
       { "label": "登壇資料をダウンロード", "url": "/downloads/long-lived-companies-talk.pdf" }
     ],
     "formHeading": "御社らしさ継承シートを受け取る",
-    "consentText": "入力いただいた情報は、資料送付またはご相談への対応にのみ使用します。",
+    "consentText": "入力いただいた情報は、資料提供、ご相談への対応、THAの関連サービス・セミナーのご案内、メールまたは任意入力された電話番号によるご連絡に利用します。",
     "thankYouMessage": "お申し込みを受け付けました。診断結果に合った継承シートをご利用ください。",
     "consultationCta": "会社らしさの継承を相談する",
     "consultationHeading": "会社らしさと時間資産の継承を相談する",

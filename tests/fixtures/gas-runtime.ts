@@ -23,6 +23,8 @@ export const GAS_HEADERS = [
   "slackStatus",
   "slackNotifiedAt",
   "slackRetryCount",
+  "phone",
+  "deleteAfter",
 ] as const;
 
 export const DEFAULT_GAS_PROPERTIES = {

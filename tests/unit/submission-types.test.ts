@@ -25,6 +25,7 @@ const validLead = {
   companyName: "THA株式会社",
   name: "西山朝子",
   email: "asako@example.com",
+  phone: "03-1234-5678",
   consent: true as const,
   talkSlug: "ai-president-intro",
   eventName: "THA AI社長 登壇セッション",
@@ -79,6 +80,37 @@ describe("GAS submission contract", () => {
       consentedAt: "2026-08-23T00:00:00.000Z",
       lead: validLead,
     });
+  });
+
+  it("requires a person name and accepts a normalized optional business phone", () => {
+    expect(() => parseLeadSubmission({
+      submissionId: validSubmissionId,
+      website: "",
+      consentedAt: "2026-08-23T00:00:00.000Z",
+      lead: { ...validLead, name: "   " },
+    })).toThrow();
+
+    expect(parseLeadSubmission({
+      submissionId: validSubmissionId,
+      website: "",
+      consentedAt: "2026-08-23T00:00:00.000Z",
+      lead: { ...validLead, phone: "  +81 (3) 1234-5678  " },
+    }).lead.phone).toBe("+81 (3) 1234-5678");
+  });
+
+  it.each([
+    "123456",
+    "1234567890123456",
+    "03-ABCD-5678",
+    "=03-1234-5678",
+    "03-1234-5678\nprivate",
+  ])("rejects unsafe or malformed optional phone %s", (phone) => {
+    expect(() => parseLeadSubmission({
+      submissionId: validSubmissionId,
+      website: "",
+      consentedAt: "2026-08-23T00:00:00.000Z",
+      lead: { ...validLead, phone },
+    })).toThrow();
   });
 
   it("rejects predictable identifiers, filled honeypots, and diagnosis answers", () => {

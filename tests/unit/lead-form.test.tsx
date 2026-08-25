@@ -84,7 +84,7 @@ function enableGas() {
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText("会社名"), "THA株式会社");
-  await user.type(screen.getByLabelText("お名前（任意）"), "西山朝子");
+  await user.type(screen.getByLabelText(/お名前/), "西山朝子");
   await user.type(screen.getByLabelText("メールアドレス"), submittedEmail);
   await user.click(screen.getByLabelText(/個人情報の取り扱いに同意する/));
 }
@@ -263,6 +263,7 @@ describe("LeadForm truthful GAS states", () => {
       companyName: "THA株式会社",
       name: "西山朝子",
       email: "asako@example.com",
+      phone: "",
       consent: true,
       talkSlug: baseProps.talkSlug,
       eventName: baseProps.eventName,
@@ -431,7 +432,8 @@ describe("LeadForm truthful GAS states", () => {
     submitAndConfirmLeadMock.mockResolvedValue(savedReceipt);
     render(<LeadForm {...baseProps} intent="consultation" thankYouMessage="ご相談を承りました。" />);
 
-    expect(screen.getByLabelText("お名前（任意）")).not.toBeRequired();
+    expect(screen.getByLabelText("お名前")).toBeRequired();
+    expect(screen.getByLabelText("電話番号（任意）")).not.toBeRequired();
     await fillRequiredFields(user);
     await user.click(screen.getByLabelText("AI社長について相談したい"));
     await user.click(screen.getByRole("button", { name: "相談を申し込む" }));
@@ -443,6 +445,31 @@ describe("LeadForm truthful GAS states", () => {
       intent: "consultation",
       consultationTopic: "ai-president",
       diagnosisStage: "experiment",
+    });
+  });
+
+  it("submits an optional phone but blocks a missing required name locally", async () => {
+    enableGas();
+    const user = userEvent.setup();
+    submitAndConfirmLeadMock.mockResolvedValue(savedReceipt);
+    render(<LeadForm {...baseProps} intent="download" downloadUrl="/downloads/action-sheet.pdf" />);
+
+    await user.type(screen.getByLabelText("会社名"), "THA株式会社");
+    await user.type(screen.getByLabelText("メールアドレス"), submittedEmail);
+    await user.type(screen.getByLabelText("電話番号（任意）"), "+81 (3) 1234-5678");
+    await user.click(screen.getByLabelText(/個人情報の取り扱いに同意する/));
+    await user.click(screen.getByRole("button", { name: "資料を受け取る" }));
+
+    expect(await screen.findByText("お名前を入力してください。")).toBeVisible();
+    expect(screen.getByLabelText("お名前")).toHaveFocus();
+    expect(submitAndConfirmLeadMock).not.toHaveBeenCalled();
+
+    await user.type(screen.getByLabelText("お名前"), "西山朝子");
+    await user.click(screen.getByRole("button", { name: "資料を受け取る" }));
+    await waitFor(() => expect(submitAndConfirmLeadMock).toHaveBeenCalledOnce());
+    expect(submitAndConfirmLeadMock.mock.calls[0]?.[0]).toMatchObject({
+      name: "西山朝子",
+      phone: "+81 (3) 1234-5678",
     });
   });
 

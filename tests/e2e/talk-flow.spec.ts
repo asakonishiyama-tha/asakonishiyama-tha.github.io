@@ -21,7 +21,8 @@ const allowedBrowserOrigins = new Set([appOrigin, fakeGasOrigin]);
 const companyName = "E2E株式会社";
 const visitorName = "E2E訪問者";
 const visitorEmail = "visitor@e2e-company.example";
-const forbiddenBrowserText = [companyName, visitorName, visitorEmail];
+const visitorPhone = "03-1234-5678";
+const forbiddenBrowserText = [companyName, visitorName, visitorEmail, visitorPhone];
 
 const stageJourneys = [
   {
@@ -127,8 +128,9 @@ async function openResult(page: Page, journey = stageJourneys[1]) {
 
 async function fillContactFields(page: Page) {
   await page.getByLabel("会社名").fill(companyName);
-  await page.getByLabel("お名前（任意）").fill(visitorName);
+  await page.getByLabel("お名前").fill(visitorName);
   await page.getByLabel("メールアドレス").fill(visitorEmail);
+  await page.getByLabel("電話番号（任意）").fill(visitorPhone);
   await page.getByLabel(/個人情報の取り扱いに同意する/).check();
 }
 
@@ -148,6 +150,7 @@ function expectSafeCapturedSubmission(
       companyName,
       name: visitorName,
       email: visitorEmail,
+      phone: visitorPhone,
       consent: true,
       talkSlug: "ai-president-intro",
       eventName: "THA AI社長 登壇セッション",
@@ -387,12 +390,15 @@ test("supports a keyboard-only diagnosis and saved download journey", async ({ p
   const company = page.getByLabel("会社名");
   await tabTo(page, company);
   await page.keyboard.type(companyName);
-  const name = page.getByLabel("お名前（任意）");
+  const name = page.getByLabel("お名前");
   await tabTo(page, name);
   await page.keyboard.type(visitorName);
   const email = page.getByLabel("メールアドレス");
   await tabTo(page, email);
   await page.keyboard.type(visitorEmail);
+  const phone = page.getByLabel("電話番号（任意）");
+  await tabTo(page, phone);
+  await page.keyboard.type(visitorPhone);
   const consent = page.getByLabel(/個人情報の取り扱いに同意する/);
   await tabTo(page, consent);
   await page.keyboard.press("Space");

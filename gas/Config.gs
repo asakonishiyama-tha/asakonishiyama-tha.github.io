@@ -31,10 +31,14 @@ var THA_SHEET_HEADERS_ = Object.freeze([
   "slackStatus",
   "slackNotifiedAt",
   "slackRetryCount",
+  "phone",
+  "deleteAfter",
 ]);
 
-var THA_ALLOWED_TALK_SLUG_ = "ai-president-intro";
-var THA_CANONICAL_EVENT_NAME_ = "THA AI社長 登壇セッション";
+var THA_TALK_EVENTS_ = Object.freeze({
+  "ai-president-intro": "THA AI社長 登壇セッション",
+  "long-lived-companies": "THA 老舗企業と時間資産 登壇セッション",
+});
 var THA_MAX_STATUS_TTL_HOURS_ = 720;
 var THA_SCRIPT_LOCK_TIMEOUT_MS_ = 10000;
 var THA_SLACK_MAX_RETRIES_ = 3;

@@ -128,22 +128,26 @@ function validateLead_(input) {
     throw new Error("invalid request");
   }
 
-  var requiredKeys = ["intent", "companyName", "email", "consent", "talkSlug", "eventName"];
-  var optionalKeys = ["name", "diagnosisStage", "referrer", "utmSource", "utmMedium", "utmCampaign"];
+  var requiredKeys = ["intent", "companyName", "name", "email", "consent", "talkSlug", "eventName"];
+  var optionalKeys = ["phone", "diagnosisStage", "referrer", "utmSource", "utmMedium", "utmCampaign"];
   if (input.intent === "consultation") {
     requiredKeys.push("consultationTopic");
   }
   requireExactObjectKeys_(input, requiredKeys, optionalKeys);
 
   var companyName = normalizeRequiredText_(input.companyName, 160);
-  var name = normalizeOptionalText_(input.name, 120);
+  var name = normalizeRequiredText_(input.name, 120);
   var email = normalizeBusinessEmail_(input.email);
+  var phone = normalizeOptionalPhone_(input.phone);
   var talkSlug = normalizeRequiredText_(input.talkSlug, 80);
   var eventName = normalizeRequiredText_(input.eventName, 160);
+  var canonicalEventName = hasOwn_(THA_TALK_EVENTS_, talkSlug)
+    ? THA_TALK_EVENTS_[talkSlug]
+    : "";
   if (input.consent !== true
       || !/^[a-z0-9][a-z0-9-]*$/.test(talkSlug)
-      || talkSlug !== THA_ALLOWED_TALK_SLUG_
-      || eventName !== THA_CANONICAL_EVENT_NAME_) {
+      || canonicalEventName.length === 0
+      || eventName !== canonicalEventName) {
     throw new Error("invalid request");
   }
 
@@ -170,9 +174,10 @@ function validateLead_(input) {
     companyName: companyName,
     name: name,
     email: email,
+    phone: phone,
     consent: true,
-    talkSlug: THA_ALLOWED_TALK_SLUG_,
-    eventName: THA_CANONICAL_EVENT_NAME_,
+    talkSlug: talkSlug,
+    eventName: canonicalEventName,
     diagnosisStage: diagnosisStage,
     consultationTopic: consultationTopic,
     referrer: normalizeOptionalText_(input.referrer, 2048),
@@ -180,6 +185,28 @@ function validateLead_(input) {
     utmMedium: normalizeOptionalText_(input.utmMedium, 200),
     utmCampaign: normalizeOptionalText_(input.utmCampaign, 200),
   });
+}
+
+function normalizeOptionalPhone_(value) {
+  if (value === undefined) {
+    return "";
+  }
+  if (typeof value !== "string") {
+    throw new Error("invalid request");
+  }
+  var normalized = value.trim();
+  if (normalized.length === 0) {
+    return "";
+  }
+  var digitCount = normalized.replace(/\D/g, "").length;
+  if (normalized.length > 40
+      || /[\u0000-\u001f\u007f]/.test(normalized)
+      || !/^\+?[0-9() -]+$/.test(normalized)
+      || digitCount < 7
+      || digitCount > 15) {
+    throw new Error("invalid request");
+  }
+  return normalized;
 }
 
 function normalizeRequiredText_(value, maximum) {

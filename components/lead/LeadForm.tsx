@@ -59,6 +59,7 @@ type FormValues = {
   companyName: string;
   name: string;
   email: string;
+  phone: string;
   consent: boolean;
   consultationTopic: ConsultationTopic | "";
   website: string;
@@ -70,6 +71,7 @@ const initialValues: FormValues = {
   companyName: "",
   name: "",
   email: "",
+  phone: "",
   consent: false,
   consultationTopic: "",
   website: "",
@@ -146,6 +148,7 @@ export function LeadForm({
     companyName: null,
     name: null,
     email: null,
+    phone: null,
     consultationTopic: null,
     consent: null,
   });
@@ -232,6 +235,7 @@ export function LeadForm({
       companyName: values.companyName,
       name: values.name,
       email: values.email,
+      phone: values.phone,
       consent: values.consent,
       talkSlug,
       eventName,
@@ -393,13 +397,14 @@ export function LeadForm({
           onChange={(event) => updateValue("companyName", event.target.value)}
         />
         {fieldError("companyName")}
-        <label htmlFor={`${intent}-name`}>お名前（任意）</label>
+        <label htmlFor={`${intent}-name`}>お名前</label>
         <input
           ref={(node) => { controlsRef.current.name = node; }}
           id={`${intent}-name`}
           name="name"
           type="text"
           autoComplete="name"
+          required
           aria-invalid={isInvalid("name")}
           aria-describedby={describedBy("name")}
           value={values.name}
@@ -420,6 +425,20 @@ export function LeadForm({
           onChange={(event) => updateValue("email", event.target.value)}
         />
         {fieldError("email")}
+        <label htmlFor={`${intent}-phone`}>電話番号（任意）</label>
+        <input
+          ref={(node) => { controlsRef.current.phone = node; }}
+          id={`${intent}-phone`}
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          inputMode="tel"
+          aria-invalid={isInvalid("phone")}
+          aria-describedby={describedBy("phone")}
+          value={values.phone}
+          onChange={(event) => updateValue("phone", event.target.value)}
+        />
+        {fieldError("phone")}
       </div>
       {intent === "consultation" ? <fieldset
         className={styles.topicFieldset}

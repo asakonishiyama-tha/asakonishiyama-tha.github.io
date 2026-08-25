@@ -1,13 +1,14 @@
 import { leadSchema } from "@/lib/validation/lead-schema";
 
-export const leadFieldNames = ["companyName", "name", "email", "consultationTopic", "consent"] as const;
+export const leadFieldNames = ["companyName", "name", "email", "phone", "consultationTopic", "consent"] as const;
 export type LeadFieldName = typeof leadFieldNames[number];
 export type LeadFieldErrors = Partial<Record<LeadFieldName, string>>;
 
 const fieldMessages: Record<LeadFieldName, string> = {
   companyName: "会社名を入力してください。",
-  name: "お名前をご確認ください。",
+  name: "お名前を入力してください。",
   email: "会社のメールアドレスを入力してください。",
+  phone: "電話番号をご確認ください。",
   consultationTopic: "相談したいテーマを選択してください。",
   consent: "個人情報の取り扱いへの同意が必要です。",
 };

@@ -41,6 +41,9 @@ describe("long-lived-companies Talk content", () => {
       "explore", "experiment", "systemize", "integrate",
     ]);
     expect(bundle?.handout.chapters).toHaveLength(11);
+    expect(bundle?.manifest.lead.consentText).toBe(
+      "入力いただいた情報は、資料提供、ご相談への対応、THAの関連サービス・セミナーのご案内、メールまたは任意入力された電話番号によるご連絡に利用します。",
+    );
     expect(talk?.scenes.map(({ id }) => id)).toEqual([
       "hero", "opening-question", "three-facts", "not-accidental", "five-soils",
       "time-assets-photo", "change-to-protect", "case-toushirou", "case-ohga",
