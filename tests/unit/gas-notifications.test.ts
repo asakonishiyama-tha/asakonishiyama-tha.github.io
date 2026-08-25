@@ -36,10 +36,23 @@ const VALID_SLACK_PROPERTIES = {
 
 const VALID_MAIL_PROPERTIES = {
   THA_AUTOREPLY_ENABLED: "true",
-  THA_AUTOREPLY_SENDER_NAME: "THA登壇事務局",
-  THA_AUTOREPLY_REPLY_TO: "reply@example.com",
-  THA_AUTOREPLY_SUBJECT: "お申し込みを受け付けました",
-  THA_AUTOREPLY_BODY: "お問い合わせありがとうございます。\n担当者よりご連絡します。",
+  THA_AUTOREPLY_SENDER_NAME: "THA / AI社長",
+  THA_AUTOREPLY_REPLY_TO: "info@tha-inc.com",
+  THA_AUTOREPLY_SUBJECT: "【THA】資料請求・お問い合わせを受け付けました",
+  THA_AUTOREPLY_BODY: [
+    "THA登壇サイトより、資料請求・お問い合わせいただき、ありがとうございます。",
+    "",
+    "受付を完了しました。",
+    "資料は、フォーム送信後の画面からダウンロードできます。",
+    "",
+    "個別相談をお申し込みいただいた場合は、担当者より2営業日以内を目安にご連絡します。",
+    "",
+    "本メールにお心当たりがない場合や、登録情報の削除をご希望の場合は、下記までご連絡ください。",
+    "",
+    "株式会社THA",
+    "info@tha-inc.com",
+    "https://ai-syacho.com/",
+  ].join("\n"),
 };
 
 type Runtime = ReturnType<typeof createGasRuntime>;
@@ -60,6 +73,7 @@ function downloadSubmission(
       companyName: "THA株式会社",
       name: "西山 朝子",
       email: "person@example.com",
+      phone: "090-1234-5678",
       consent: true,
       talkSlug: "ai-president-intro",
       eventName: CANONICAL_EVENT_NAME,
@@ -145,6 +159,8 @@ function storedRow(overrides: Partial<Record<(typeof GAS_HEADERS)[number], unkno
     slackStatus: "pending",
     slackNotifiedAt: "",
     slackRetryCount: 0,
+    phone: "090-1234-5678",
+    deleteAfter: "2027-08-24T03:04:05.678Z",
     ...overrides,
   };
   return GAS_HEADERS.map((header) => values[header]);
@@ -264,6 +280,21 @@ describe("privacy-safe Slack formatting", () => {
     ].join("\n"));
   });
 
+  it("uses the canonical long-lived-companies Talk label without exposing phone or email", () => {
+    const runtime = runtimeWithSlack();
+    postAndProcess(runtime, downloadSubmission({
+      talkSlug: "long-lived-companies",
+      eventName: "THA 老舗企業と時間資産 登壇セッション",
+      email: "private@business.example",
+      phone: "090-9999-8888",
+    }));
+
+    const text = slackRequestText(runtime);
+    expect(text).toContain("対象Talk：御社らしさは、20年後も残るか。");
+    expect(text).not.toContain("private@business.example");
+    expect(text).not.toContain("090-9999-8888");
+  });
+
   it.each([
     ["explore", "探索期"],
     ["experiment", "実験期"],
@@ -288,9 +319,9 @@ describe("privacy-safe Slack formatting", () => {
     expect(slackRequestText(runtime)).toContain(`相談テーマ：${label}`);
   });
 
-  it("uses explicit missing-value labels when name and diagnosis are absent", () => {
+  it("uses the explicit missing-value label when diagnosis is absent", () => {
     const runtime = runtimeWithSlack();
-    const payload = downloadSubmission({ name: "" });
+    const payload = downloadSubmission();
     delete (payload.lead as Record<string, unknown>).diagnosisStage;
 
     postAndProcess(runtime, payload);
@@ -300,7 +331,7 @@ describe("privacy-safe Slack formatting", () => {
       "",
       "種別：資料請求",
       "会社名：THA株式会社",
-      "氏名：未入力様",
+      "氏名：西山 朝子様",
       "対象Talk：会社に、もう一人の社長がいたら。",
       "診断結果：未診断",
       "受付日時：2026-08-24 12:04:05 JST",
@@ -356,6 +387,7 @@ describe("privacy-safe Slack formatting", () => {
       "PRIVATE MEDIUM",
       "PRIVATE CAMPAIGN",
       "2026-08-20T10:11:12.000Z",
+      "090-9999-8888",
     ];
     const row = storedRow({
       email: privateValues[0],
@@ -365,6 +397,7 @@ describe("privacy-safe Slack formatting", () => {
       utmMedium: privateValues[4],
       utmCampaign: privateValues[5],
       consentedAt: privateValues[6],
+      phone: privateValues[7],
       intent: "consultation",
       consultationTopic: "time-assets",
       slackStatus: "failed",
@@ -737,7 +770,7 @@ describe("note-backed at-most-once autoreply", () => {
     );
   });
 
-  it("uses only the row email dynamically, preserves all 19 values, and stores no PII in the sent note", () => {
+  it("uses only the row email dynamically, preserves all 21 values, and stores no PII in the sent note", () => {
     const row = storedRow({
       company: "PRIVATE COMPANY",
       name: "PRIVATE PERSON",

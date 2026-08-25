@@ -259,9 +259,9 @@ git remote -v
 9. [ ] **Slack宛先・本文確定**
 10. [ ] **Slack Webhook有効化**
 
-ゲート7ではSheet実接続後に`processPendingLeadNotifications`のtime-driven triggerを設置して検証します。ゲート7では承認済みrepository variablesとして`NEXT_PUBLIC_GAS_WEB_APP_URL`と`NEXT_PUBLIC_PRIVACY_POLICY_URL`を同時に設定します。ゲート7のフォーム有効化はレビュー済み`main`の`workflow_dispatch`によるdeployだけで行い、非`main` refは全jobがskipします。
+ゲート7では新しい空の21列Sheetタブ（末尾は`phone,deleteAfter`）を実接続し、大島を暫定データ責任者として、1年後の`deleteAfter`を月次確認・手動削除する運用を確認します。自動削除は設定しません。削除依頼窓口は`info@tha-inc.com`です。続いて`processPendingLeadNotifications`のtime-driven triggerを設置して検証します。ゲート7では承認済みrepository variablesとして`NEXT_PUBLIC_GAS_WEB_APP_URL`と`NEXT_PUBLIC_PRIVACY_POLICY_URL=https://ai-syacho.com/policy`を同時に設定します。ゲート7のフォーム有効化はレビュー済み`main`の`workflow_dispatch`によるdeployだけで行い、非`main` refは全jobがskipします。フォーム有効化前に依存監査の3 High / 0 Criticalを改めて評価し、オーナーの受容またはレビュー済み更新判断を記録します。
 
-ゲート8は自動返信（autoresponder）の有効化だけです。ゲート9はSlackの宛先（target）と本文（body）の確定、ゲート10はSlack Webhookの有効化です。ゲートNはN+1（次のゲート）を承認しないため、完了から次の操作を推測しません。
+ゲート8は自動返信（autoresponder）の有効化だけです。実行直前に、宛先ルール、送信者`THA / AI社長`、reply-to `info@tha-inc.com`、件名と本文全文を提示して最終承認を得ます。ゲート9はSlack宛先`tha_問い合わせフォーム通知`と、会社名・氏名・Talk・診断結果・相談テーマ・受付日時・Sheetリンクだけを含む本文の再確認です。メールと電話番号は含めません。ゲート10はSlack Webhookの有効化です。ゲートNはN+1（次のゲート）を承認しないため、完了から次の操作を推測しません。
 
 commitやローカル検証は、外部操作を一切承認しません。repo作成、Talk/素材公開、push、Pages、一般公開、GAS、Sheet/trigger/repository variables、フォーム、自動返信、Slackは、該当ゲートの対象と変更内容を提示して明示的な最終承認を得るまで実行しません。
 

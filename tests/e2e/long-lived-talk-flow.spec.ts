@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
-import { defaultFakeGasEndpoint } from "./fixtures/fake-gas";
+import { defaultFakeGasEndpoint, readFakeGas, resetFakeGas } from "./fixtures/fake-gas";
 
 const talkPath = "/talks/long-lived-companies/";
 const questPath = `${talkPath}quest/`;
@@ -90,6 +90,38 @@ for (const journey of stageJourneys) {
     await expect(page.getByRole("heading", { name: journey.title, exact: true })).toBeVisible();
   });
 }
+
+test("submits the canonical long-lived Talk lead with required name and optional phone", async ({ page, request }) => {
+  await resetFakeGas(request, "saved");
+  await page.goto(questPath);
+  await answer(page, stageJourneys[1].answers);
+  await page.getByRole("button", { name: "個別アクションシートを受け取る" }).click();
+
+  await page.getByLabel("会社名").fill("老舗E2E株式会社");
+  await page.getByLabel("お名前").fill("老舗テスト担当者");
+  await page.getByLabel("メールアドレス").fill("visitor@e2e-company.example");
+  await page.getByLabel("電話番号（任意）").fill("03-9876-5432");
+  await page.getByLabel(/個人情報の取り扱いに同意する/).check();
+  await page.getByRole("button", { name: "資料を受け取る" }).click();
+
+  await expect(page.getByRole("link", { name: "資料をダウンロード", exact: true })).toBeVisible();
+  const snapshot = await readFakeGas(request);
+  expect(snapshot.posts).toHaveLength(1);
+  expect(snapshot.posts[0]?.payload).toMatchObject({
+    website: "",
+    lead: {
+      intent: "download",
+      companyName: "老舗E2E株式会社",
+      name: "老舗テスト担当者",
+      email: "visitor@e2e-company.example",
+      phone: "03-9876-5432",
+      talkSlug: "long-lived-companies",
+      eventName: "THA 老舗企業と時間資産 登壇セッション",
+      diagnosisStage: "experiment",
+      consent: true,
+    },
+  });
+});
 
 test("serves the semantic handout and all six exact PDFs", async ({ page, request }) => {
   const response = await page.goto(handoutPath);

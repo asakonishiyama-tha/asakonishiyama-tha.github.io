@@ -28,12 +28,16 @@ Leave both Slack values and the four mail content/sender values blank, and leave
 The configured tab may be completely empty; the first valid save initializes this exact header. Any non-empty tab with a different header fails closed.
 
 ```text
-receivedAt,submissionId,intent,talkSlug,eventName,company,name,email,consultationTopic,consultationMessage,resultStage,referrer,utmSource,utmMedium,utmCampaign,consentedAt,slackStatus,slackNotifiedAt,slackRetryCount
+receivedAt,submissionId,intent,talkSlug,eventName,company,name,email,consultationTopic,consultationMessage,resultStage,referrer,utmSource,utmMedium,utmCampaign,consentedAt,slackStatus,slackNotifiedAt,slackRetryCount,phone,deleteAfter
 ```
 
-`receivedAt` and the event name are generated canonically by the script. Browser `companyName` maps to `company`, and `diagnosisStage` maps to `resultStage`. `consultationMessage` remains empty until that field is explicitly approved and added to the browser contract.
+`receivedAt`, `deleteAfter`, and the event name are generated canonically by the script. `deleteAfter` is one calendar year after `receivedAt`; a leap-day receipt is clamped to February 28 in the following year. Browser `companyName` maps to `company`, and `diagnosisStage` maps to `resultStage`. `consultationMessage` remains empty until that field is explicitly approved and added to the browser contract. A leading `+` phone is stored with the Sheet text escape prefix so it displays as entered without becoming a formula.
 
-Normalized browser-controlled text is rejected if its first character is `=`, `+`, `-`, or `@`; values are never escaped or rewritten before storage. This protects every user-controlled text cell from Sheet formula interpretation while preserving truthful stored values.
+Normalized browser-controlled text other than phone is rejected if its first character is `=`, `+`, `-`, or `@`. Phone accepts only an optional leading `+`, digits, spaces, hyphens, and parentheses, with 7–15 digits total; only its leading `+` receives the Sheet text escape described above. This protects every user-controlled cell from Sheet formula interpretation while preserving the displayed phone value.
+
+The header changed from 19 to 21 columns. Do not point this version at a non-empty 19-column tab. For activation, create a new empty approved tab or perform a separately reviewed migration; the script intentionally fails closed on any non-empty mismatched header.
+
+Rows are not deleted automatically. The interim data owner is 大島: once a month, filter `deleteAfter` at or before the review date, confirm any legal/operational hold, and manually delete expired rows. Early deletion requests are accepted at `info@tha-inc.com`. Record the review outside this public repository without copying lead values into logs or screenshots.
 
 The script lock covers exact-header validation, UUID idempotency, abuse suppression, and append. An existing UUID returns idempotently before abuse accounting. For a new UUID, the server compares an in-memory SHA-256 digest of the normalized email with successful rows received during the preceding ten minutes. At most three matching new UUIDs are saved in that inclusive window. Neither the digest nor another email-derived key is written to the Sheet, properties, cache, response, or logs. Pending Sheet writes are flushed before the lock is released so the next serialized request observes the committed UUID.
 
@@ -50,7 +54,7 @@ After a new row is durable, its Slack state starts as `pending` with retry count
 
 Slack is disabled unless both `THA_SLACK_WEBHOOK_URL` and `THA_SLACK_SHEET_URL` are valid. The webhook must be an HTTPS `hooks.slack.com/services/...` URL without credentials, query, or fragment. The Sheet link must be an HTTPS Google Sheets URL. A blank or invalid value performs zero URL fetches and records `disabled` for the new row.
 
-The message contains only the application type, company, optional name, canonical Talk label, canonical result-stage label, canonical consultation topic when applicable, JST receipt time, and the approved Sheet link. The payload disables mrkdwn rendering and link/media unfurls. Company/name additionally escape Slack control characters and neutralize case-insensitive `http://`, `https://`, `www.`, IP-address, and domain-like sequences, so applicant text cannot mention, inject formatting, or create a clickable link. The separately approved Sheet URL remains the exact `詳細` link. Email, consultation free text, referrer, UTM fields, consent time, webhook, and arbitrary row serialization are never included or logged.
+The approved target is the private Slack channel `tha_問い合わせフォーム通知`. The message contains only the application type, company, required name, canonical Talk label, canonical result-stage label, canonical consultation topic when applicable, JST receipt time, and the approved Sheet link. The payload disables mrkdwn rendering and link/media unfurls. Company/name additionally escape Slack control characters and neutralize case-insensitive `http://`, `https://`, `www.`, IP-address, and domain-like sequences, so applicant text cannot mention, inject formatting, or create a clickable link. The separately approved Sheet URL remains the exact `詳細` link. Email, phone, consultation free text, referrer, UTM fields, consent time, deletion deadline, webhook, and arbitrary row serialization are never included or logged.
 
 Before each delivery, the row is claimed durably as `sending`. During that state, `slackNotifiedAt` temporarily contains the five-minute lease expiry and a random claim UUID. The URL fetch has a 30-second timeout and occurs only after the claim was flushed and the lock released. Finalization writes `sent` plus server UTC time for a 2xx response, or `failed` for a non-2xx response/exception, only when the claim token and retry count still match.
 
@@ -70,11 +74,38 @@ Do not install that trigger before the approvals, and do not point a trigger at 
 
 ## Optional autoreply contract
 
-Autoreply is disabled unless `THA_AUTOREPLY_ENABLED` is exactly `true` and the approved sender name, reply-to address, subject, and plain-text body are all valid and non-empty. The owner processor stores its versioned state as a note on the submission-ID cell, leaving all 19 cell values unchanged. The note contains only `tha-autoreply:v1`, one of `disabled | claimed | sent | failed`, a server UTC timestamp, and for an attempted message a random claim UUID; it never contains lead data, recipient data, or configuration values.
+Autoreply is disabled unless `THA_AUTOREPLY_ENABLED` is exactly `true` and the approved sender name, reply-to address, subject, and plain-text body are all valid and non-empty. The owner processor stores its versioned state as a note on the submission-ID cell, leaving all 21 cell values unchanged. The note contains only `tha-autoreply:v1`, one of `disabled | claimed | sent | failed`, a server UTC timestamp, and for an attempted message a random claim UUID; it never contains lead data, recipient data, or configuration values.
 
 The `claimed` note is flushed under ScriptLock before `MailApp.sendEmail(message)`, the mail call runs outside the lock, and finalization changes only the exactly matching claim note under a new lock. Any non-empty note is terminal for automatic processing, including `claimed`: duplicate POSTs, Slack-only retries, concurrent/later processor runs, and stale claims never resend mail. This gives at-most-once delivery. A crash after the claim flush but before MailApp accepts the message can therefore lose one autoreply; that loss is intentional and preferred to duplicating customer mail. The stored business email is used only as `to`, while the configured sender/subject/body are sent verbatim without lead interpolation. A disabled configuration or MailApp exception never changes the durable receipt or Slack value state.
 
 The explicit manifest scopes are limited to Spreadsheet read/write, external request, and send mail. No Drive, Gmail mailbox, or full-account mail scope is requested. Adding the scopes does not enable a webhook, mail content, trigger, deployment, or external connection.
+
+### Approved autoreply values (activation still requires Gate 8 final confirmation)
+
+```text
+THA_AUTOREPLY_SENDER_NAME=THA / AI社長
+THA_AUTOREPLY_REPLY_TO=info@tha-inc.com
+THA_AUTOREPLY_SUBJECT=【THA】資料請求・お問い合わせを受け付けました
+```
+
+The exact plain-text body is:
+
+```text
+THA登壇サイトより、資料請求・お問い合わせいただき、ありがとうございます。
+
+受付を完了しました。
+資料は、フォーム送信後の画面からダウンロードできます。
+
+個別相談をお申し込みいただいた場合は、担当者より2営業日以内を目安にご連絡します。
+
+本メールにお心当たりがない場合や、登録情報の削除をご希望の場合は、下記までご連絡ください。
+
+株式会社THA
+info@tha-inc.com
+https://ai-syacho.com/
+```
+
+The recipient is the submitted, validated business email. The body, sender, reply-to, and subject are verbatim and contain no submitted values. Immediately before Gate 8, present the recipient rule and this full body again for final external-message approval; do not infer approval from this checked-in template.
 
 ## Local verification
 

@@ -29,11 +29,18 @@ const compactText = (maximum: number) =>
     .refine((value) => !/[\u0000-\u001f\u007f]/.test(value))
     .refine(isSpreadsheetSafeText);
 
-const optionalPersonName = z.string()
+const personName = compactText(120);
+
+const optionalPhone = z.string()
   .trim()
-  .max(120)
+  .max(40)
   .refine((value) => !/[\u0000-\u001f\u007f]/.test(value))
-  .refine(isSpreadsheetSafeText)
+  .refine((value) => value === "" || /^\+?[0-9() -]+$/.test(value))
+  .refine((value) => {
+    if (value === "") return true;
+    const digitCount = value.replace(/\D/g, "").length;
+    return digitCount >= 7 && digitCount <= 15;
+  })
   .optional()
   .default("");
 
@@ -51,8 +58,9 @@ const acquisitionText = (maximum: number) =>
 
 const commonFields = {
   companyName: compactText(160),
-  name: optionalPersonName,
+  name: personName,
   email: businessEmail,
+  phone: optionalPhone,
   consent: z.literal(true),
   talkSlug: z.string().trim().min(1).max(80).regex(/^[a-z0-9][a-z0-9-]*$/),
   eventName: compactText(160),
